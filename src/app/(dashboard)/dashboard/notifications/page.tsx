@@ -33,7 +33,7 @@ type PlatformNotification = {
   audienceLabel: string;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 const AUDIENCE_COUNTS: Record<TargetAudience, number> = {
   All: 12458,
@@ -73,7 +73,7 @@ function normalizeNotificationType(type: string): NotificationType {
 
 function TypeBadge({ type }: { type: NotificationType }) {
   const map: Record<NotificationType, { cls: string; icon: React.ReactNode }> = {
-    Info: { cls: "bg-blue-50 text-blue-750 border-blue-200", icon: <Info className="h-3 w-3" /> },
+    Info: { cls: "bg-emerald-50 text-emerald-750 border-emerald-200", icon: <Info className="h-3 w-3" /> },
     Warning: { cls: "bg-amber-50 text-amber-700 border-amber-200", icon: <AlertTriangle className="h-3 w-3" /> },
     Success: { cls: "bg-green-50 text-green-700 border-green-200", icon: <CheckCircle2 className="h-3 w-3" /> },
     Error: { cls: "bg-red-50 text-red-700 border-red-200", icon: <XCircle className="h-3 w-3" /> },
@@ -184,7 +184,7 @@ export default function NotificationCenterPage() {
       label: "Total Users",
       value: totalUsers.toLocaleString(),
       icon: (
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#0A3D91]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-[#064e3b]">
           <Users className="h-5.5 w-5.5" />
         </div>
       ),
@@ -345,13 +345,13 @@ export default function NotificationCenterPage() {
                           className={cn(
                             "flex items-center justify-center gap-1.5 py-2 px-3 border rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm",
                             active
-                              ? "bg-blue-50 text-[#0A3D91] border-blue-300"
+                              ? "bg-emerald-50 text-[#064e3b] border-emerald-300"
                               : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
                           )}
                         >
                           <span className={cn(
                             "h-1.5 w-1.5 rounded-full shrink-0",
-                            t === "Info" ? "bg-blue-500" :
+                            t === "Info" ? "bg-emerald-500" :
                             t === "Warning" ? "bg-amber-500" :
                             t === "Success" ? "bg-green-500" : "bg-red-500"
                           )} />
@@ -377,7 +377,7 @@ export default function NotificationCenterPage() {
                         setAudience(value as TargetAudience);
                       }
                     }}
-                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-semibold outline-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 text-gray-800 transition-all cursor-pointer"
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-semibold outline-none focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 text-gray-800 transition-all cursor-pointer"
                   >
                     <option value="All">All Users ({audienceCounts.All.toLocaleString()})</option>
                     {userOptions.map((user) => (
@@ -398,7 +398,7 @@ export default function NotificationCenterPage() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter announcement headline..."
-                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-medium outline-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 text-gray-800 transition-all placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-medium outline-none focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 text-gray-800 transition-all placeholder:text-gray-500"
                   />
                 </div>
 
@@ -410,7 +410,7 @@ export default function NotificationCenterPage() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Enter broadcast message body..."
-                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-medium outline-none resize-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 text-gray-800 transition-all placeholder:text-gray-500"
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm font-medium outline-none resize-none focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 text-gray-800 transition-all placeholder:text-gray-500"
                   />
                 </div>
 

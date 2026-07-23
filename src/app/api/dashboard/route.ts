@@ -106,7 +106,7 @@ export async function GET() {
         return {
           name: coin,
           value: totalAssetVal ? Number(cadValue.toFixed(2)) : 0,
-          color: "#1650AB" // Will be overridden with dynamic colors in UI
+          color: "#047857" // Will be overridden with dynamic colors in UI
         };
       })
       .sort((a, b) => b.value - a.value);

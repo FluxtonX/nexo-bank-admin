@@ -48,7 +48,7 @@ type ChatThread = {
   ticket_id?: string;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 /* ─── User Avatar Component with 3-tier Fallback ─────────────────────────────────────── */
 function UserAvatar({
@@ -124,7 +124,7 @@ function StatusIndicator({ status }: { status: ChatStatus }) {
 export default function LiveChatSupportPage() {
   return (
     <RequirePermission permission={["respond-chat", "manage-tickets"]}>
-      <Suspense fallback={<div className="p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-500" /></div>}>
+      <Suspense fallback={<div className="p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-500" /></div>}>
         <LiveChatSupportPageContent />
       </Suspense>
     </RequirePermission>
@@ -551,7 +551,7 @@ function LiveChatSupportPageContent() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search conversations..."
-                  className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-xs text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-xs text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
                 />
               </div>
             </div>
@@ -581,7 +581,7 @@ function LiveChatSupportPageContent() {
                       className={cn(
                         "w-full text-left p-3.5 border rounded-2xl transition-all flex items-start gap-3.5 cursor-pointer",
                         isActive
-                          ? "bg-white border-blue-200 shadow-md ring-2 ring-blue-50"
+                          ? "bg-white border-emerald-200 shadow-md ring-2 ring-emerald-50"
                           : "bg-transparent border-transparent hover:bg-gray-100/60"
                       )}
                     >
@@ -605,7 +605,7 @@ function LiveChatSupportPageContent() {
                         <div className="flex items-center gap-1.5 pt-1">
                           <span className="text-[9px] text-gray-600 font-mono uppercase tracking-tight">{thread.user.id.substring(0, 8)}</span>
                           {thread.is_ticket && (
-                            <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tight">
+                            <span className="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tight">
                               Ticket: {thread.category || "Other"}
                             </span>
                           )}
@@ -768,7 +768,7 @@ function LiveChatSupportPageContent() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Type your message..."
-                    className="h-10 flex-1 px-4 border border-gray-200 rounded-xl text-xs font-semibold outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 text-gray-800 placeholder:text-gray-500 bg-gray-50/20"
+                    className="h-10 flex-1 px-4 border border-gray-200 rounded-xl text-xs font-semibold outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 text-gray-800 placeholder:text-gray-500 bg-gray-50/20"
                   />
 
                   <button

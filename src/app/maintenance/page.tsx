@@ -14,10 +14,10 @@ export default function MaintenancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070B1E] text-slate-100 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans select-none">
+    <div className="min-h-screen bg-[#021a12] text-slate-100 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans select-none">
       {/* Background ambient lighting accents */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-rose-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Grid Pattern Overlay */}
       <div 
@@ -60,7 +60,7 @@ export default function MaintenancePage() {
         <div className="bg-[#0C122C]/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-left font-mono text-xs text-slate-400 space-y-2.5 backdrop-blur-sm shadow-xl">
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 text-slate-500">
             <span className="flex items-center gap-1.5 text-slate-300 font-semibold">
-              <Terminal className="w-3.5 h-3.5 text-blue-400" />
+              <Terminal className="w-3.5 h-3.5 text-emerald-400" />
               SYSTEM DIAGNOSTICS
             </span>
             <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider">OFFLINE</span>
@@ -95,7 +95,7 @@ export default function MaintenancePage() {
           <button
             onClick={handleRetry}
             disabled={isRetrying}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-sm text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 disabled:opacity-60 transition-all duration-150 shadow-lg shadow-blue-600/25 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#070B1E]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-sm text-white bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 disabled:opacity-60 transition-all duration-150 shadow-lg shadow-emerald-600/25 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-[#021a12]"
           >
             <RotateCw className={`w-4 h-4 ${isRetrying ? 'animate-spin' : ''}`} />
             <span>{isRetrying ? 'Re-establishing Connection...' : 'Retry Connection'}</span>

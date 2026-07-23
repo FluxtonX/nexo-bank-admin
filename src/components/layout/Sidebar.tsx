@@ -66,7 +66,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       <div className="flex flex-col px-4 py-5 border-b border-gray-100 gap-1.5 justify-center shrink-0">
         <img
           src="/CDNTlogo.png"
-          alt="CDNT Logo"
+          alt="Nexo Bank Logo"
           className="h-9 w-auto object-contain self-start"
         />
         <p className="text-[10px] text-gray-600 font-bold uppercase tracking-wider pl-0.5">Admin Portal</p>

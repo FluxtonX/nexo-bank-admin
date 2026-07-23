@@ -134,7 +134,7 @@ function FreezeModal({ onConfirm, onClose }: { onConfirm: (r: string) => void; o
               onBlur={() => setTouched(true)}
               className={cn("w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-500 outline-none resize-none transition-all",
                 hasError ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-100"
-                         : "border-gray-200 bg-gray-50 focus:border-blue-400 focus:ring-2 focus:ring-blue-50")}
+                         : "border-gray-200 bg-gray-50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50")}
             />
             {hasError && <p className="text-xs text-red-500 mt-1">Please provide a reason for freezing.</p>}
           </div>
@@ -182,8 +182,8 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
       >
         <div className="p-6">
           <div className="flex items-start gap-4 mb-5">
-            <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-              <FileEdit className="h-6 w-6 text-blue-600" />
+            <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+              <FileEdit className="h-6 w-6 text-emerald-600" />
             </div>
             <div className="pt-0.5">
               <h2 className="text-[17px] font-bold text-gray-900">Add Admin Note</h2>
@@ -196,7 +196,7 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
               onChange={(e) => { setNote(e.target.value); setTouched(true); }}
               className={cn("w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-500 outline-none resize-none transition-all",
                 hasError ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-100"
-                         : "border-gray-200 bg-blue-50/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-50")}
+                         : "border-gray-200 bg-emerald-50/50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50")}
             />
             {hasError && <p className="text-xs text-red-500 mt-1">Please enter a note before saving.</p>}
           </div>
@@ -204,7 +204,7 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
             <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
             <button onClick={handleSubmit} disabled={loading}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-70 transition-all"
-              style={{ background: "linear-gradient(135deg,#0A3D91,#1650AB)" }}>
+              style={{ background: "linear-gradient(135deg,#064e3b,#047857)" }}>
               {loading ? "Saving…" : "Add Note"}
             </button>
           </div>
@@ -329,7 +329,7 @@ function AddTransactionModal({
           </div>
           <div className="flex gap-3 pt-2">
             <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>
-            <button onClick={handleSubmit} disabled={loading} className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-70" style={{ background: "linear-gradient(135deg,#0A3D91,#1650AB)" }}>
+            <button onClick={handleSubmit} disabled={loading} className="flex-1 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-70" style={{ background: "linear-gradient(135deg,#064e3b,#047857)" }}>
               {loading ? "Saving…" : "Add Transaction"}
             </button>
           </div>
@@ -563,7 +563,7 @@ function ManageBalanceModal({
           </div>
 
           {/* Current Balance Display */}
-          <div className="flex flex-col gap-1.5 p-2.5 bg-blue-50 rounded-lg">
+          <div className="flex flex-col gap-1.5 p-2.5 bg-emerald-50 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-gray-600">Current {currency} Balance</span>
               <span className="text-xs font-bold text-gray-900">{currentBalance.toFixed(8)} {currency}</span>
@@ -603,7 +603,7 @@ function ManageBalanceModal({
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
                   Or enter amount in CAD
-                  <span className="rounded-[4px] bg-[#EEF3FF] px-1.5 py-0.5 text-[10px] font-semibold text-[#113285]">
+                  <span className="rounded-[4px] bg-[#EEF3FF] px-1.5 py-0.5 text-[10px] font-semibold text-[#047857]">
                     at live rate
                   </span>
                   {rateLoading && (
@@ -645,7 +645,7 @@ function ManageBalanceModal({
 
           <div className="flex gap-2 pt-1">
             <button onClick={onClose} className="flex-1 py-2 rounded-lg border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>
-            <button onClick={handleSubmit} disabled={loading} className="flex-1 py-2 rounded-lg text-xs font-bold text-white disabled:opacity-70" style={{ background: "linear-gradient(135deg,#0A3D91,#1650AB)" }}>
+            <button onClick={handleSubmit} disabled={loading} className="flex-1 py-2 rounded-lg text-xs font-bold text-white disabled:opacity-70" style={{ background: "linear-gradient(135deg,#064e3b,#047857)" }}>
               {loading ? "Processing…" : activeTab === "adjust" ? "Adjust Balance" : activeTab === "deposit" ? "Add Deposit" : "Add Withdrawal"}
             </button>
           </div>
@@ -730,7 +730,7 @@ function SecurityTab({ user }: { user: any }) {
       <div>
         <h3 className="text-base font-bold text-gray-900 mb-4">Active Sessions</h3>
         {(!sessions || sessions.length === 0) && (
-          <p className="text-sm text-gray-600 mb-4 bg-blue-50/50 p-3 rounded-lg border border-blue-100">Sessions will appear here once the user_sessions table tracks active logins.</p>
+          <p className="text-sm text-gray-600 mb-4 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">Sessions will appear here once the user_sessions table tracks active logins.</p>
         )}
         <div className="space-y-3">
           {sessions.map((session: any) => {
@@ -801,13 +801,13 @@ function SecurityTab({ user }: { user: any }) {
                 disabled={isLoading || isDone}
                 className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all text-left group disabled:opacity-70"
               >
-                <div className="h-9 w-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 group-hover:bg-blue-50 transition-colors">
+                <div className="h-9 w-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 transition-colors">
                   {isLoading ? (
                     <span className="h-4 w-4 border-2 border-gray-400 border-t-blue-600 rounded-full animate-spin" />
                   ) : isDone ? (
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                   ) : (
-                    <Icon className="h-4 w-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                    <Icon className="h-4 w-4 text-gray-600 group-hover:text-emerald-600 transition-colors" />
                   )}
                 </div>
                 <div>
@@ -944,7 +944,7 @@ function SupportTab({ user }: { user: any }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2.5 flex-wrap mb-1">
                   {chat.is_ticket ? (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700 tracking-wider">TICKET</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 tracking-wider">TICKET</span>
                   ) : (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700 tracking-wider">LIVE CHAT</span>
                   )}
@@ -1133,7 +1133,7 @@ function EditWalletAddressModal({ user, onClose, onSuccess }: { user: any; onClo
               <select
                 value={crypto}
                 onChange={(e) => setCrypto(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
               >
                 <option value="BTC">BTC</option>
                 <option value="ETH">ETH</option>
@@ -1145,7 +1145,7 @@ function EditWalletAddressModal({ user, onClose, onSuccess }: { user: any; onClo
               <select
                 value={network}
                 onChange={(e) => setNetwork(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
               >
                 {crypto === "BTC" && (
                   <>
@@ -1169,14 +1169,14 @@ function EditWalletAddressModal({ user, onClose, onSuccess }: { user: any; onClo
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-sm font-semibold text-gray-700">Wallet Address</label>
                 {isCustomAddress && (
-                  <span className="text-[10px] font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Custom address</span>
+                  <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Custom address</span>
                 )}
               </div>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
                 placeholder="Enter wallet address"
               />
               {error && (
@@ -1208,7 +1208,7 @@ function EditWalletAddressModal({ user, onClose, onSuccess }: { user: any; onClo
               onClick={handleSave}
               disabled={loading}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition-all"
-              style={{ background: "linear-gradient(135deg, #0A3D91, #1650AB)" }}
+              style={{ background: "linear-gradient(135deg, #064e3b, #047857)" }}
             >
               {loading ? "Saving…" : "Save Address"}
             </button>
@@ -1259,7 +1259,7 @@ function PortfolioTab({ user }: { user: any }) {
       balance: `${Number(w.balance).toLocaleString(undefined, { maximumFractionDigits: isCAD ? 2 : 8 })} ${currency}`,
       usd: `$${cadValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       rawCad: cadValue,
-      color: COIN_COLORS[currency?.toUpperCase()] || "#0A3D91",
+      color: COIN_COLORS[currency?.toUpperCase()] || "#064e3b",
     };
   });
 
@@ -1278,7 +1278,7 @@ function PortfolioTab({ user }: { user: any }) {
         <h3 className="text-base font-bold text-gray-900 mb-4">Asset Allocation</h3>
         <button
           onClick={() => setEditingWalletAddress(true)}
-          className="px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm flex items-center gap-1.5"
+          className="px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm flex items-center gap-1.5"
         >
           <Pencil className="h-3.5 w-3.5" /> Edit Wallet Address
         </button>
@@ -1319,7 +1319,7 @@ function PortfolioTab({ user }: { user: any }) {
                     <h4 className="text-sm font-bold text-gray-900">{asset.name}</h4>
                     <p className="text-xs text-gray-600">{asset.coin}</p>
                     {customAddress && (
-                      <p className="text-[10px] text-blue-600 font-medium mt-0.5">Custom address set</p>
+                      <p className="text-[10px] text-emerald-600 font-medium mt-0.5">Custom address set</p>
                     )}
                   </div>
                 </div>
@@ -1393,7 +1393,7 @@ function DocumentsTab({ user }: { user: any }) {
                 </span>
                 <button
                   onClick={() => setSelectedDoc({ ...doc, _type: type, _name: name, _date: date })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm"
                 >
                   <Eye className="h-3.5 w-3.5" /> View
                 </button>
@@ -1464,7 +1464,7 @@ function AuditLogsTab({ user }: { user: any }) {
   const actionBadgeStyle: Record<string, string> = {
     ACCOUNT_FROZEN: "bg-red-50 text-red-600 border-red-200",
     ACCOUNT_UNFROZEN: "bg-green-50 text-green-600 border-green-200",
-    BALANCE_ADJUSTED: "bg-blue-50 text-blue-600 border-blue-200",
+    BALANCE_ADJUSTED: "bg-emerald-50 text-emerald-600 border-emerald-200",
     DEPOSIT_ADDED: "bg-green-50 text-green-600 border-green-200",
     WITHDRAWAL_ADDED: "bg-orange-50 text-orange-600 border-orange-200",
     KYC_UPDATED: "bg-purple-50 text-purple-600 border-purple-200",
@@ -1628,7 +1628,7 @@ function UserDetailPageContent() {
         <p className="text-sm text-gray-600">The user ID &quot;{userId}&quot; does not exist in the database.</p>
         <button onClick={() => router.push("/dashboard/users")}
           className="mt-2 px-4 py-2 rounded-xl text-sm font-semibold text-white"
-          style={{ background: "linear-gradient(135deg,#0A3D91,#1650AB)" }}>
+          style={{ background: "linear-gradient(135deg,#064e3b,#047857)" }}>
           Back to Users
         </button>
       </div>
@@ -1691,9 +1691,9 @@ function UserDetailPageContent() {
         {/* ── 4 Info Cards */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {[
-            { label: "Total Balance",  content: <p className="text-xl font-bold text-gray-900">${(user.balance || 0).toLocaleString("en-US",{minimumFractionDigits:2})}</p>, icon: Wallet,        iconBg: "bg-blue-50",  iconColor: "text-blue-600" },
+            { label: "Total Balance",  content: <p className="text-xl font-bold text-gray-900">${(user.balance || 0).toLocaleString("en-US",{minimumFractionDigits:2})}</p>, icon: Wallet,        iconBg: "bg-emerald-50",  iconColor: "text-emerald-600" },
             { label: "KYC Status",     content: <KycBadge status={user.kyc as KycStatus} />,          icon: CheckCircle2,  iconBg: "bg-green-50", iconColor: "text-green-500" },
-            { label: "Account Status", content: <AccountBadge status={currentAccount} />, icon: Shield,        iconBg: "bg-blue-50",  iconColor: "text-blue-500" },
+            { label: "Account Status", content: <AccountBadge status={currentAccount} />, icon: Shield,        iconBg: "bg-emerald-50",  iconColor: "text-emerald-500" },
             { label: "Risk Level",     content: <RiskBadge level={user.risk} />,          icon: AlertTriangle, iconBg: "bg-amber-50", iconColor: "text-amber-500" },
           ].map(({ label, content, icon: Icon, iconBg, iconColor }) => (
             <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
@@ -1717,12 +1717,12 @@ function UserDetailPageContent() {
               return (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                   className={cn("flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors relative shrink-0",
-                    isActive ? "text-blue-700" : "text-gray-600 hover:text-gray-700 hover:bg-gray-50")}>
+                    isActive ? "text-emerald-700" : "text-gray-600 hover:text-gray-700 hover:bg-gray-50")}>
                   <Icon className="h-4 w-4" />
                   {tab.label}
                   {isActive && (
                     <motion.div layoutId="tab-underline"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full" />
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-t-full" />
                   )}
                 </button>
               );

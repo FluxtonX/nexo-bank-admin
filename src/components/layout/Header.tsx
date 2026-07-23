@@ -215,7 +215,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
                         >
                           <div
                             className={`grid h-8 w-8 place-items-center rounded-lg shrink-0 ${
-                              n.type === "Info" ? "bg-blue-50 text-blue-600" :
+                              n.type === "Info" ? "bg-emerald-50 text-emerald-600" :
                               n.type === "Warning" ? "bg-amber-50 text-amber-600" :
                               n.type === "Success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
                             }`}

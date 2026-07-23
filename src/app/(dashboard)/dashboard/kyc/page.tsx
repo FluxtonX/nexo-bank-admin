@@ -45,7 +45,7 @@ type KycRequest = {
   rawImages?: { front: string; back: string; selfie: string; };
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 const INITIAL_REQUESTS: KycRequest[] = [
   {
@@ -88,7 +88,7 @@ const TABS: Array<{ label: string; value: TabValue }> = [
 function StatusBadge({ status }: { status: ReviewStatus }) {
   const map: Record<ReviewStatus, { cls: string; icon: React.ReactNode }> = {
     Pending: { cls: "bg-amber-50 text-amber-600 border-amber-200", icon: <Clock className="h-3.5 w-3.5" /> },
-    "Under Review": { cls: "bg-blue-50 text-blue-700 border-blue-200", icon: <Eye className="h-3.5 w-3.5" /> },
+    "Under Review": { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: <Eye className="h-3.5 w-3.5" /> },
     Approved: { cls: "bg-green-50 text-green-700 border-green-200", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
     Rejected: { cls: "bg-red-50 text-red-700 border-red-200", icon: <XCircle className="h-3.5 w-3.5" /> },
   };
@@ -219,7 +219,7 @@ function DocumentScanPreview({
           <div className="flex flex-col items-center gap-1.5">
             <div className="h-24 w-20 rounded-lg bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-600 overflow-hidden relative">
               <User className="h-12 w-12 text-gray-600" />
-              <div className="absolute bottom-0 left-0 right-0 bg-[#0A3D91]/80 text-[8px] text-center text-white py-0.5 font-bold uppercase tracking-wider font-mono">Selfie</div>
+              <div className="absolute bottom-0 left-0 right-0 bg-[#064e3b]/80 text-[8px] text-center text-white py-0.5 font-bold uppercase tracking-wider font-mono">Selfie</div>
             </div>
             <span className="text-[9px] font-bold text-gray-600 uppercase font-mono">Live Selfie</span>
           </div>
@@ -508,9 +508,9 @@ function KycVerificationPageContent() {
       label: "Under Review",
       value: counts["Under Review"],
       note: "In progress",
-      tone: "text-blue-700",
+      tone: "text-emerald-700",
       icon: (
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
           <Eye className="h-6 w-6" />
         </div>
       ),
@@ -642,7 +642,7 @@ function KycVerificationPageContent() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by name, email, request ID, or document..."
-                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 sm:text-base"
+                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 sm:text-base"
               />
               {search && (
                 <button
@@ -665,14 +665,14 @@ function KycVerificationPageContent() {
                   onClick={() => setActiveTab(tab.value)}
                   className={cn(
                     "relative flex h-14 shrink-0 items-center gap-2 px-2 text-sm font-semibold transition-colors sm:px-4 cursor-pointer",
-                    active ? "text-blue-700" : "text-gray-600 hover:text-gray-800"
+                    active ? "text-emerald-700" : "text-gray-600 hover:text-gray-800"
                   )}
                 >
                   {tab.label}
-                  <span className={cn("rounded-full px-2 py-0.5 text-xs", active ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-600")}>
+                  <span className={cn("rounded-full px-2 py-0.5 text-xs", active ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600")}>
                     {counts[tab.value]}
                   </span>
-                  {active && <motion.span layoutId="kyc-tab" className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-blue-700" />}
+                  {active && <motion.span layoutId="kyc-tab" className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-emerald-700" />}
                 </button>
               );
             })}
@@ -726,7 +726,7 @@ function KycVerificationPageContent() {
                   {filteredRequests.map((request) => (
                     <div
                       key={request.requestId}
-                      className="grid min-w-[1150px] grid-cols-[1.1fr_1.7fr_1.3fr_1fr_1.1fr_1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-blue-50/20"
+                      className="grid min-w-[1150px] grid-cols-[1.1fr_1.7fr_1.3fr_1fr_1.1fr_1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-emerald-50/20"
                     >
                       <div>
                         <p className="font-bold text-gray-900">{request.requestId}</p>
@@ -753,7 +753,7 @@ function KycVerificationPageContent() {
                       <div className="relative flex justify-end">
                         <button
                           onClick={() => handleStartReview(request)}
-                          className="inline-flex h-8.5 w-full items-center justify-center gap-1.5 rounded-lg bg-[#0A3D91] px-3 text-xs font-bold text-white transition-all hover:bg-[#1650AB] active:scale-[0.98] shadow-sm cursor-pointer"
+                          className="inline-flex h-8.5 w-full items-center justify-center gap-1.5 rounded-lg bg-[#064e3b] px-3 text-xs font-bold text-white transition-all hover:bg-[#047857] active:scale-[0.98] shadow-sm cursor-pointer"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           Review
@@ -771,7 +771,7 @@ function KycVerificationPageContent() {
               Showing <strong className="text-gray-700">{filteredRequests.length}</strong> of <strong className="text-gray-700">{requests.length}</strong> verification requests
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
-              <ShieldCheck className="h-4 w-4 text-[#0A3D91]" />
+              <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
               CDNT secure identity queue
             </div>
           </div>
@@ -867,11 +867,11 @@ function KycVerificationPageContent() {
                       {/* Card 1: ID Document */}
                       <div
                         onClick={() => setPreviewDoc("id")}
-                        className="border border-gray-200/80 rounded-2xl p-5 hover:border-blue-400 transition-colors cursor-pointer bg-white group flex flex-col justify-between min-h-[200px]"
+                        className="border border-gray-200/80 rounded-2xl p-5 hover:border-emerald-400 transition-colors cursor-pointer bg-white group flex flex-col justify-between min-h-[200px]"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-gray-700">
-                            <CreditCard className="h-4.5 w-4.5 text-gray-600 group-hover:text-blue-500 transition-colors" />
+                            <CreditCard className="h-4.5 w-4.5 text-gray-600 group-hover:text-emerald-500 transition-colors" />
                             <span className="text-sm font-bold">{selectedRequest.documentType}</span>
                           </div>
                           <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
@@ -887,11 +887,11 @@ function KycVerificationPageContent() {
                       {/* Card 2: Selfie Document */}
                       <div
                         onClick={() => setPreviewDoc("selfie")}
-                        className="border border-gray-200/80 rounded-2xl p-5 hover:border-blue-400 transition-colors cursor-pointer bg-white group flex flex-col justify-between min-h-[200px]"
+                        className="border border-gray-200/80 rounded-2xl p-5 hover:border-emerald-400 transition-colors cursor-pointer bg-white group flex flex-col justify-between min-h-[200px]"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-gray-700">
-                            <UserCheck className="h-4.5 w-4.5 text-gray-600 group-hover:text-blue-500 transition-colors" />
+                            <UserCheck className="h-4.5 w-4.5 text-gray-600 group-hover:text-emerald-500 transition-colors" />
                             <span className="text-sm font-bold">Selfie Verification</span>
                           </div>
                           <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">

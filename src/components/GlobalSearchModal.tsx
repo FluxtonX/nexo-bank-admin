@@ -184,7 +184,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                             onClick={() => handleUserClick(user.id)}
                             className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer text-left"
                           >
-                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                               {getInitials(user.full_name)}
                             </div>
                             <div className="min-w-0 flex-1">
@@ -258,7 +258,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                             onClick={handleWithdrawalClick}
                             className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer text-left"
                           >
-                            <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                            <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
                               <ArrowDownToLine className="h-4 w-4" />
                             </div>
                             <div className="min-w-0 flex-1">

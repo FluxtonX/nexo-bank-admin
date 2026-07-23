@@ -193,7 +193,7 @@ export default function TwoFactorPage() {
                   className={`w-full pl-10 pr-4 py-3 rounded-xl border text-gray-900 text-sm tracking-[0.4em] font-mono placeholder:text-gray-400 placeholder:tracking-[0.4em] outline-none transition-all duration-200
                     ${error && touched
                       ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      : "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                     }`}
                 />
               </div>
@@ -205,7 +205,7 @@ export default function TwoFactorPage() {
               type="submit"
               disabled={loading}
               className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-200 mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
-              style={{ background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 50%, #1C5AB8 100%)" }}
+              style={{ background: "linear-gradient(135deg, #064e3b 0%, #047857 50%, #1C5AB8 100%)" }}
             >
               {loading ? (
                 <>
@@ -223,7 +223,7 @@ export default function TwoFactorPage() {
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors group"
+              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-emerald-600 transition-colors group"
             >
               <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
               Back to login
@@ -237,7 +237,7 @@ export default function TwoFactorPage() {
               <button
                 type="button"
                 onClick={() => setCode(DEMO_CODE)}
-                className="text-blue-600 hover:underline font-mono font-semibold"
+                className="text-emerald-600 hover:underline font-mono font-semibold"
               >
                 {DEMO_CODE}
               </button>

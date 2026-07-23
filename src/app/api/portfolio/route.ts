@@ -57,14 +57,14 @@ export async function GET(request: Request) {
     // Create allocations dynamically for all currencies
     const colorMap: Record<string, { color: string; strokeColor: string }> = {
       BTC: { color: "bg-amber-500", strokeColor: "#f59e0b" },
-      ETH: { color: "bg-blue-600", strokeColor: "#2563eb" },
+      ETH: { color: "bg-emerald-600", strokeColor: "#064e3b" },
       USDT: { color: "bg-emerald-500", strokeColor: "#10b981" },
       USDC: { color: "bg-emerald-500", strokeColor: "#10b981" },
       CAD: { color: "bg-red-500", strokeColor: "#ef4444" },
       LTC: { color: "bg-gray-500", strokeColor: "#6b7280" },
       DOGE: { color: "bg-yellow-500", strokeColor: "#eab308" },
       SOL: { color: "bg-purple-500", strokeColor: "#a855f7" },
-      ADA: { color: "bg-blue-400", strokeColor: "#60a5fa" },
+      ADA: { color: "bg-emerald-400", strokeColor: "#34d399" },
       XRP: { color: "bg-gray-800", strokeColor: "#111827" },
     };
 

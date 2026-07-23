@@ -56,9 +56,9 @@ const config: Config = {
           dark: "#dc2626",
         },
         info: {
-          DEFAULT: "#3b82f6",
-          light: "#dbeafe",
-          dark: "#2563eb",
+          DEFAULT: "#064e3b",
+          light: "#ecfdf5",
+          dark: "#064e3b",
         },
       },
       borderRadius: {

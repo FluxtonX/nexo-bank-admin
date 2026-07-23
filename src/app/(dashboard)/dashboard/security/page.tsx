@@ -39,7 +39,7 @@ type SecurityLog = {
 
 // Removed static INITIAL_LOGS array
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 export default function SecurityLogsAuditTrailPage() {
   const [loading, setLoading] = useState(true);
@@ -163,9 +163,9 @@ export default function SecurityLogsAuditTrailPage() {
   // Category Colors Resolver
   const categoryStyles: Record<LogCategory, string> = {
     Auth: "bg-purple-50 text-purple-700 border-purple-100",
-    Admin: "bg-blue-50 text-blue-700 border-blue-100",
+    Admin: "bg-emerald-50 text-emerald-700 border-emerald-100",
     Transaction: "bg-emerald-50 text-emerald-700 border-emerald-100",
-    Security: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    Security: "bg-emerald-50 text-emerald-700 border-emerald-100",
     Account: "bg-pink-50 text-pink-700 border-pink-100",
     Kyc: "bg-amber-50 text-amber-700 border-amber-100"
   };
@@ -234,7 +234,7 @@ export default function SecurityLogsAuditTrailPage() {
                         onClick={() => selectDateRange(r)}
                         className={cn(
                           "w-full text-left px-4 py-2 text-xs font-semibold hover:bg-gray-50 transition-colors",
-                          dateRange === r ? "text-blue-600 bg-blue-50/20" : "text-gray-600"
+                          dateRange === r ? "text-emerald-600 bg-emerald-50/20" : "text-gray-600"
                         )}
                       >
                         {r}
@@ -319,7 +319,7 @@ export default function SecurityLogsAuditTrailPage() {
             <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold text-gray-600 uppercase tracking-wider font-mono">Admin Actions</span>
-                <div className="h-9 w-9 rounded-xl bg-blue-50/70 flex items-center justify-center text-blue-600 border border-blue-100">
+                <div className="h-9 w-9 rounded-xl bg-emerald-50/70 flex items-center justify-center text-emerald-600 border border-emerald-100">
                   <Shield className="h-5 w-5" />
                 </div>
               </div>
@@ -341,7 +341,7 @@ export default function SecurityLogsAuditTrailPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by action, user, ID, or IP address..."
-            className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-xs font-semibold text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+            className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-xs font-semibold text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
           />
         </div>
 
@@ -362,7 +362,7 @@ export default function SecurityLogsAuditTrailPage() {
                 )}
                 style={
                   selectedCategory === cat
-                    ? { background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)" }
+                    ? { background: "linear-gradient(135deg, #064e3b 0%, #047857 100%)" }
                     : {}
                 }
               >
@@ -386,7 +386,7 @@ export default function SecurityLogsAuditTrailPage() {
                 )}
                 style={
                   selectedSeverity === sev
-                    ? { background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)" }
+                    ? { background: "linear-gradient(135deg, #064e3b 0%, #047857 100%)" }
                     : {}
                 }
               >
@@ -593,9 +593,9 @@ export default function SecurityLogsAuditTrailPage() {
 
               {/* Conditional Admin Warning Box Banner */}
               {selectedLog.performedByAdmin && (
-                <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl space-y-1">
-                  <p className="text-xs font-black text-blue-700">Admin Action</p>
-                  <p className="text-[10px] text-blue-600 font-semibold">
+                <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-1">
+                  <p className="text-xs font-black text-emerald-700">Admin Action</p>
+                  <p className="text-[10px] text-emerald-600 font-semibold">
                     Performed by Admin User ({selectedLog.performedByAdmin})
                   </p>
                 </div>

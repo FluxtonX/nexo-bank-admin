@@ -31,7 +31,7 @@ export async function POST(request: Request) {
             <p style="color: #475569; font-size: 16px;">Hello,</p>
             <p style="color: #475569; font-size: 16px;">A login attempt was made to the CDNTB Admin Panel. Please use the following 6-digit code to complete your sign in:</p>
             <div style="background-color: #F8FAFC; padding: 15px; border-radius: 8px; text-align: center; margin: 25px 0;">
-              <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #0A3D91;">${code}</span>
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #064e3b;">${code}</span>
             </div>
             <p style="color: #475569; font-size: 14px;">This code will expire shortly. If you did not initiate this login, please ignore this email.</p>
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />

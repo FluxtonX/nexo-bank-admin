@@ -174,7 +174,7 @@ export const COIN_COLORS: Record<string, string> = {
   NEO: "#00C5D7",
   DASH: "#008DE4",
   ZEC: "#F4B731",
-  CAD: "#1650AB",
+  CAD: "#047857",
 };
 
 let cachedRates: Record<string, number> | null = null;

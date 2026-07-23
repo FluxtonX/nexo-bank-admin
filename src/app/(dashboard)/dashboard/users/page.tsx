@@ -81,7 +81,7 @@ function UserAvatar({
 
   if (currentSource === "initials" || !imageUrl) {
     return (
-      <div className={`${sizeClasses} bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shrink-0`}>
+      <div className={`${sizeClasses} bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold shrink-0`}>
         {user.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2)}
       </div>
     );
@@ -207,7 +207,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
                   type={type} required placeholder={placeholder}
                   value={form[field as keyof typeof form]}
                   onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder:text-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-50 transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder:text-gray-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-50 transition-all"
                 />
               </div>
             </div>
@@ -217,7 +217,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <select
               value={form.role}
               onChange={e => setForm(prev => ({ ...prev, role: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-50 transition-all bg-white"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-50 transition-all bg-white"
             >
               <option value="viewer">Viewer</option>
               <option value="manager">Manager</option>
@@ -231,7 +231,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             </button>
             <button type="submit" disabled={loading || success}
               className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-80"
-              style={{ background: "linear-gradient(135deg, #0A3D91, #1650AB)" }}>
+              style={{ background: "linear-gradient(135deg, #064e3b, #047857)" }}>
               {success ? "✓ Created!" : loading ? "Creating…" : "Create User"}
             </button>
           </div>
@@ -280,7 +280,7 @@ function FreezeModal({ onConfirm, onClose }: { onConfirm: (r: string) => void; o
               onBlur={() => setTouched(true)}
               className={cn("w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-500 outline-none resize-none transition-all",
                 hasError ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-100"
-                         : "border-gray-200 bg-gray-50 focus:border-blue-400 focus:ring-2 focus:ring-blue-50")}
+                         : "border-gray-200 bg-gray-50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50")}
             />
             {hasError && <p className="text-xs text-red-500 mt-1">Please provide a reason for freezing.</p>}
           </div>
@@ -328,8 +328,8 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
       >
         <div className="p-6">
           <div className="flex items-start gap-4 mb-5">
-            <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-              <FileEdit className="h-6 w-6 text-blue-600" />
+            <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+              <FileEdit className="h-6 w-6 text-emerald-600" />
             </div>
             <div className="pt-0.5">
               <h2 className="text-[17px] font-bold text-gray-900">Add Admin Note</h2>
@@ -342,7 +342,7 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
               onChange={(e) => { setNote(e.target.value); setTouched(true); }}
               className={cn("w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder:text-gray-500 outline-none resize-none transition-all",
                 hasError ? "border-red-300 bg-red-50 focus:ring-2 focus:ring-red-100"
-                         : "border-gray-200 bg-blue-50/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-50")}
+                         : "border-gray-200 bg-emerald-50/50 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50")}
             />
             {hasError && <p className="text-xs text-red-500 mt-1">Please enter a note before saving.</p>}
           </div>
@@ -350,7 +350,7 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
             <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
             <button onClick={handleSubmit} disabled={loading}
               className="flex-1 py-3 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-70 transition-all"
-              style={{ background: "linear-gradient(135deg,#0A3D91,#1650AB)" }}>
+              style={{ background: "linear-gradient(135deg,#064e3b,#047857)" }}>
               {loading ? "Saving…" : "Add Note"}
             </button>
           </div>
@@ -380,13 +380,13 @@ function UserRow({
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       onClick={onView}
-      className="grid min-w-[1040px] grid-cols-[2fr_2fr_1.2fr_1.1fr_1.3fr_1fr_96px] gap-4 items-center px-5 py-3.5 border-b border-gray-50 last:border-0 hover:bg-blue-50/40 cursor-pointer transition-colors group"
+      className="grid min-w-[1040px] grid-cols-[2fr_2fr_1.2fr_1.1fr_1.3fr_1fr_96px] gap-4 items-center px-5 py-3.5 border-b border-gray-50 last:border-0 hover:bg-emerald-50/40 cursor-pointer transition-colors group"
     >
       {/* USER */}
       <div className="flex items-center gap-3 min-w-0">
         <UserAvatar user={user} size="md" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-700 transition-colors">{user.name}</p>
+          <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-700 transition-colors">{user.name}</p>
           <p className="text-xs text-gray-600 truncate">{(user as any).shortId || user.id}</p>
         </div>
       </div>
@@ -412,7 +412,7 @@ function UserRow({
           onClick={onView}
           title="View user overview"
           aria-label={`View ${user.name}`}
-          className="h-8 w-8 flex items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-200 transition-colors"
+          className="h-8 w-8 flex items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-200 transition-colors"
         >
           <Eye className="h-4 w-4" />
         </button>
@@ -570,7 +570,7 @@ function UsersPageContent() {
             <button
               onClick={() => setShowAddUser(true)}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-sm transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(135deg, #0A3D91, #1650AB)" }}
+              style={{ background: "linear-gradient(135deg, #064e3b, #047857)" }}
             >
               <UserPlus className="h-4 w-4" /> Add User
             </button>
@@ -580,7 +580,7 @@ function UsersPageContent() {
         {/* ── Stat Cards */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {[
-            { label: "Total Users",     value: totalUsers.toLocaleString(),    sub: "+234 this month",  subColor: "text-green-600", icon: <Shield   className="h-5 w-5 text-blue-500" />, iconBg: "bg-blue-50"   },
+            { label: "Total Users",     value: totalUsers.toLocaleString(),    sub: "+234 this month",  subColor: "text-green-600", icon: <Shield   className="h-5 w-5 text-emerald-500" />, iconBg: "bg-emerald-50"   },
             { label: "Verified Users",  value: verifiedUsers.toLocaleString(), sub: `${Math.round(verifiedUsers/totalUsers*100)}% verification rate`, subColor: "text-gray-600", icon: <CheckCircle2 className="h-5 w-5 text-green-500" />, iconBg: "bg-green-50" },
             { label: "Pending KYC",     value: pendingKyc.toLocaleString(),    sub: "Requires attention", subColor: "text-amber-600",  icon: <Clock    className="h-5 w-5 text-amber-500" />, iconBg: "bg-amber-50"  },
             { label: "High Risk",       value: highRisk.toLocaleString(),      sub: "Monitor closely",   subColor: "text-red-600",    icon: <AlertTriangle className="h-5 w-5 text-red-400" />, iconBg: "bg-red-50"   },
@@ -613,7 +613,7 @@ function UsersPageContent() {
               value={search}
               onChange={e => handleSearch(e.target.value)}
               placeholder="Search by name, email, ID, or phone..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-500 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all shadow-sm"
             />
             {search && (
               <button onClick={() => handleSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600">
@@ -627,7 +627,7 @@ function UsersPageContent() {
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all shadow-sm",
                 isFilterOpen || filter !== "all"
-                  ? "border-blue-400 bg-blue-50 text-blue-700"
+                  ? "border-emerald-400 bg-emerald-50 text-emerald-700"
                   : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
               )}
             >
@@ -650,7 +650,7 @@ function UsersPageContent() {
                       className={cn(
                         "w-full text-left px-4 py-2.5 text-sm transition-colors",
                         filter === opt.value
-                          ? "bg-blue-50 text-blue-700 font-semibold"
+                          ? "bg-emerald-50 text-emerald-700 font-semibold"
                           : "text-gray-700 hover:bg-gray-50"
                       )}
                     >
@@ -764,7 +764,7 @@ function UsersPageContent() {
                       ? "text-white shadow-sm"
                       : "text-gray-600 border border-gray-200 hover:bg-gray-100"
                   )}
-                  style={safePage === i + 1 ? { background: "linear-gradient(135deg, #0A3D91, #1650AB)" } : {}}
+                  style={safePage === i + 1 ? { background: "linear-gradient(135deg, #064e3b, #047857)" } : {}}
                 >
                   {i + 1}
                 </button>

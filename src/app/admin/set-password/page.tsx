@@ -139,7 +139,7 @@ function SetPasswordForm() {
                   placeholder="Enter new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder:text-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                  className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder:text-gray-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all duration-200"
                 />
                 <button
                   type="button"
@@ -167,7 +167,7 @@ function SetPasswordForm() {
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder:text-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                  className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder:text-gray-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all duration-200"
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ function SetPasswordForm() {
               type="submit"
               disabled={loading || !token}
               className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-200 mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
-              style={{ background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 50%, #1C5AB8 100%)" }}
+              style={{ background: "linear-gradient(135deg, #064e3b 0%, #047857 50%, #1C5AB8 100%)" }}
             >
               {loading ? (
                 <>
@@ -216,7 +216,7 @@ export default function SetPasswordPage() {
         <Suspense
           fallback={
             <div className="w-full bg-white rounded-2xl p-8 shadow-2xl flex items-center justify-center h-[300px]">
-              <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+              <Loader2 className="h-8 w-8 text-emerald-600 animate-spin" />
             </div>
           }
         >

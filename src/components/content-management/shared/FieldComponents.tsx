@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Trash2, Plus, GripVertical, Save, Check, Clock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+export const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 export type CategoryId =
   | "global"
@@ -78,14 +78,14 @@ export function TextField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none resize-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none resize-none transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
         />
       ) : (
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
         />
       )}
       {helper && <p className="text-[11px] text-gray-400 mt-1">{helper}</p>}
@@ -126,7 +126,7 @@ export function ListEditor({
             <input
               value={item.value}
               onChange={(e) => update(item.id, e.target.value)}
-              className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+              className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
             />
             <button
               onClick={() => remove(item.id)}
@@ -139,7 +139,7 @@ export function ListEditor({
       </div>
       <button
         onClick={add}
-        className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
+        className="mt-2 flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer"
       >
         <Plus className="h-3.5 w-3.5" />
         Add item
@@ -185,14 +185,14 @@ export function ComplexListEditor({
                 value={item.title}
                 onChange={(e) => updateTitle(item.id, e.target.value)}
                 placeholder="Title"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
               />
               <textarea
                 value={item.description}
                 onChange={(e) => updateDesc(item.id, e.target.value)}
                 placeholder="Description"
                 rows={2}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none resize-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none resize-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
               />
             </div>
             <button
@@ -206,7 +206,7 @@ export function ComplexListEditor({
       </div>
       <button
         onClick={add}
-        className="mt-3 flex items-center gap-1.5 text-[12px] font-semibold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
+        className="mt-3 flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer"
       >
         <Plus className="h-3.5 w-3.5" />
         Add item

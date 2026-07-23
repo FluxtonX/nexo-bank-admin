@@ -34,7 +34,7 @@ import { RequirePermission } from "@/components/layout/RequirePermission";
 
 // Removed static REVENUE_TX_DATA and USER_GROWTH_DATA
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 
 
@@ -346,7 +346,7 @@ function ReportsAnalyticsPageContent() {
 
                           "w-full text-left px-4 py-2 text-xs font-semibold hover:bg-gray-50 transition-colors",
 
-                          dateRange === r ? "text-blue-600 bg-blue-50/20" : "text-gray-600"
+                          dateRange === r ? "text-emerald-600 bg-emerald-50/20" : "text-gray-600"
 
                         )}
 
@@ -464,7 +464,7 @@ function ReportsAnalyticsPageContent() {
 
                 <span className="text-[11px] font-extrabold text-gray-600 uppercase tracking-wider font-mono">Total Transactions</span>
 
-                <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
+                <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
 
                   <Activity className="h-4.5 w-4.5" />
 
@@ -596,7 +596,7 @@ function ReportsAnalyticsPageContent() {
 
               <div className="flex items-center gap-1.5">
 
-                <span className="h-2.5 w-2.5 rounded-sm bg-blue-100 border border-blue-200" />
+                <span className="h-2.5 w-2.5 rounded-sm bg-emerald-100 border border-emerald-200" />
 
                 <span className="text-gray-600">Transactions</span>
 
@@ -786,7 +786,7 @@ function ReportsAnalyticsPageContent() {
 
                         width={barWidth}
 
-                        fill={isHovered ? "#1650AB" : "#0A3D91"}
+                        fill={isHovered ? "#047857" : "#064e3b"}
 
                         rx="1.5"
 
@@ -878,7 +878,7 @@ function ReportsAnalyticsPageContent() {
 
                       <span className="text-slate-300 flex items-center gap-1.5">
 
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#0A3D91]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#064e3b]" />
 
                         Rev
 
@@ -1124,7 +1124,7 @@ function ReportsAnalyticsPageContent() {
 
                           fill="transparent"
 
-                          stroke="#0A3D91"
+                          stroke="#064e3b"
 
                           strokeWidth={2.5}
 
@@ -1186,7 +1186,7 @@ function ReportsAnalyticsPageContent() {
 
                               />
 
-                              <circle cx={pt1.x} cy={pt1.y} r={isHovered ? 6 : 4} fill="#0A3D91" stroke="#FFF" strokeWidth={1.5} className="transition-all pointer-events-none" />
+                              <circle cx={pt1.x} cy={pt1.y} r={isHovered ? 6 : 4} fill="#064e3b" stroke="#FFF" strokeWidth={1.5} className="transition-all pointer-events-none" />
 
                               <circle cx={pt2.x} cy={pt2.y} r={isHovered ? 6 : 4} fill="#F59E0B" stroke="#FFF" strokeWidth={1.5} className="transition-all pointer-events-none" />
 
@@ -1258,7 +1258,7 @@ function ReportsAnalyticsPageContent() {
 
                           <span className="text-slate-300 flex items-center gap-1.5">
 
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#0A3D91]" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#064e3b]" />
 
                             Total
 
@@ -1300,9 +1300,9 @@ function ReportsAnalyticsPageContent() {
 
                 <div className="flex items-center gap-2">
 
-                  <span className="w-4 h-0.5 bg-[#0A3D91] relative flex items-center justify-center">
+                  <span className="w-4 h-0.5 bg-[#064e3b] relative flex items-center justify-center">
 
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0A3D91] border border-white" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#064e3b] border border-white" />
 
                   </span>
 

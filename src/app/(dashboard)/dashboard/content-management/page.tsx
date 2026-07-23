@@ -37,7 +37,7 @@ import { PricingPanel } from "@/components/content-management/panels/PricingPane
 import { SecurityPanel } from "@/components/content-management/panels/SecurityPanel";
 import { HelpPanel } from "@/components/content-management/panels/HelpPanel";
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 /* ─── Category Definitions ──────────────────────────────────────── */
 
@@ -182,7 +182,7 @@ function ContentManagementPageContent() {
                   />
                   <span className="flex-1 truncate">{cat.label}</span>
                   {cat.badge && !isActive && (
-                    <span className="text-[9px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full shrink-0">
+                    <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full shrink-0">
                       {cat.badge}
                     </span>
                   )}

@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { RequirePermission } from "@/components/layout/RequirePermission";
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 export default function AdminSettingsPage() {
   return (
@@ -142,8 +142,8 @@ function AdminSettingsPageContent() {
         id={id}
         onClick={() => onChange(!checked)}
         className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none focus:ring-2 focus:ring-blue-50 focus:ring-offset-1",
-          checked ? "bg-[#0A3D91]" : "bg-gray-200"
+          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none focus:ring-2 focus:ring-emerald-50 focus:ring-offset-1",
+          checked ? "bg-[#064e3b]" : "bg-gray-200"
         )}
       >
         <span
@@ -199,7 +199,7 @@ function AdminSettingsPageContent() {
         {/* 1. General Settings */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-6">
           <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-            <div className="h-10 w-10 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-center text-blue-700 shrink-0">
+            <div className="h-10 w-10 rounded-xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
               <Globe className="h-5 w-5" />
             </div>
             <div>
@@ -224,7 +224,7 @@ function AdminSettingsPageContent() {
                   required
                   value={platformName}
                   onChange={(e) => setPlatformName(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
                 />
               </div>
 
@@ -236,7 +236,7 @@ function AdminSettingsPageContent() {
                   required
                   value={supportEmail}
                   onChange={(e) => setSupportEmail(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
                 />
               </div>
 
@@ -289,7 +289,7 @@ function AdminSettingsPageContent() {
                     required
                     value={platformFee}
                     onChange={(e) => setPlatformFee(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                    className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
                   />
                 </div>
 
@@ -301,7 +301,7 @@ function AdminSettingsPageContent() {
                     required
                     value={maxWithdrawal}
                     onChange={(e) => setMaxWithdrawal(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                    className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ function AdminSettingsPageContent() {
                   required
                   value={minWithdrawal}
                   onChange={(e) => setMinWithdrawal(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50"
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-xs font-semibold text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50"
                 />
               </div>
 

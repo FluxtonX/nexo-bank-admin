@@ -30,7 +30,7 @@ type AdminNotification = {
 
 function TypeBadge({ type }: { type: string }) {
   const map: Record<string, { cls: string; icon: React.ReactNode }> = {
-    Info: { cls: "bg-blue-50 text-blue-750 border-blue-200", icon: <Info className="h-3 w-3" /> },
+    Info: { cls: "bg-emerald-50 text-emerald-750 border-emerald-200", icon: <Info className="h-3 w-3" /> },
     Warning: { cls: "bg-amber-50 text-amber-700 border-amber-200", icon: <AlertTriangle className="h-3 w-3" /> },
     Success: { cls: "bg-green-50 text-green-700 border-green-200", icon: <CheckCircle2 className="h-3 w-3" /> },
     Error: { cls: "bg-red-50 text-red-700 border-red-200", icon: <XCircle className="h-3 w-3" /> },
@@ -161,7 +161,7 @@ export default function AdminNotificationsListPage() {
             <p className="mt-1 text-sm text-gray-600">
               All notifications received by the admin panel
               {unreadCount > 0 && (
-                <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200">
+                <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
                   {unreadCount} unread
                 </span>
               )}
@@ -196,7 +196,7 @@ export default function AdminNotificationsListPage() {
               className="flex items-center gap-2 text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
             >
               {allSelected ? (
-                <CheckSquare className="h-4 w-4 text-blue-600" />
+                <CheckSquare className="h-4 w-4 text-emerald-600" />
               ) : (
                 <Square className="h-4 w-4 text-gray-400" />
               )}
@@ -214,7 +214,7 @@ export default function AdminNotificationsListPage() {
             {unreadCount > 0 && (
               <button
                 onClick={() => markAsRead.mutate(undefined)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition-colors cursor-pointer border border-blue-200"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-colors cursor-pointer border border-emerald-200"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Mark All Read
@@ -262,8 +262,8 @@ export default function AdminNotificationsListPage() {
                     key={notif.id}
                     className={cn(
                       "flex items-start gap-4 px-5 py-4 transition-colors",
-                      !notif.is_read ? "bg-blue-50/30" : "bg-white",
-                      isSelected && "bg-blue-50/60"
+                      !notif.is_read ? "bg-emerald-50/30" : "bg-white",
+                      isSelected && "bg-emerald-50/60"
                     )}
                   >
                     {/* Checkbox */}
@@ -272,7 +272,7 @@ export default function AdminNotificationsListPage() {
                       className="mt-1 shrink-0 cursor-pointer"
                     >
                       {isSelected ? (
-                        <CheckSquare className="h-4 w-4 text-blue-600" />
+                        <CheckSquare className="h-4 w-4 text-emerald-600" />
                       ) : (
                         <Square className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors" />
                       )}
@@ -287,7 +287,7 @@ export default function AdminNotificationsListPage() {
                         <div className="flex items-center gap-2">
                           <TypeBadge type={notif.type} />
                           {!notif.is_read && (
-                            <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                           )}
                         </div>
                         <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1 font-mono">

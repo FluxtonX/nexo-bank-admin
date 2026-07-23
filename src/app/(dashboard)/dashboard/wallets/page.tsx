@@ -35,7 +35,7 @@ type Wallet = {
   last_activity: string;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 function StatusBadge({ status }: { status: WalletStatus }) {
   const map: Record<WalletStatus, string> = {
@@ -131,7 +131,7 @@ function EditAddressModal({
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
               placeholder="Enter wallet address"
             />
             {error && (
@@ -248,7 +248,7 @@ function CreateWalletModal({
                 type="text"
                 value={crypto}
                 onChange={(e) => setCrypto(e.target.value.toUpperCase())}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
                 placeholder="e.g. SOL, USDC"
               />
             </div>
@@ -261,7 +261,7 @@ function CreateWalletModal({
                 type="text"
                 value={network}
                 onChange={(e) => setNetwork(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
                 placeholder="e.g. Solana, ERC20"
               />
             </div>
@@ -274,7 +274,7 @@ function CreateWalletModal({
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
                 placeholder="Enter wallet address"
               />
             </div>
@@ -286,7 +286,7 @@ function CreateWalletModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as WalletStatus)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 transition-all"
               >
                 <option value="Active">Active</option>
                 <option value="Paused">Paused</option>
@@ -474,7 +474,7 @@ function WalletManagementPageContent() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by crypto, network, or address..."
-                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 sm:text-base"
+                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 sm:text-base"
               />
               {search && (
                 <button
@@ -541,7 +541,7 @@ function WalletManagementPageContent() {
                   {filteredWallets.map((wallet, idx) => (
                     <div
                       key={wallet.wallet_id || idx}
-                      className="grid min-w-[1200px] grid-cols-[1fr_1.5fr_3fr_1.5fr_1.5fr_1fr_1.5fr_1.2fr] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-blue-50/20"
+                      className="grid min-w-[1200px] grid-cols-[1fr_1.5fr_3fr_1.5fr_1.5fr_1fr_1.5fr_1.2fr] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-emerald-50/20"
                     >
                       {/* Crypto */}
                       <div className="flex items-center gap-2">
@@ -590,7 +590,7 @@ function WalletManagementPageContent() {
                       <div>
                         <button
                           onClick={() => setEditingWallet(wallet)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition-colors cursor-pointer"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                           Edit Address
@@ -609,7 +609,7 @@ function WalletManagementPageContent() {
               Showing <strong className="text-gray-700">{filteredWallets.length}</strong> of <strong className="text-gray-700">{wallets.length}</strong> wallets
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
-              <ShieldCheck className="h-4 w-4 text-[#0A3D91]" />
+              <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
               Secure cryptographic vault interface
             </div>
           </div>

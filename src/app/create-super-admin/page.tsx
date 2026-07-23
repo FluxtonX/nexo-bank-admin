@@ -192,7 +192,7 @@ export default function CreateSuperAdminPage() {
                     className={`w-full pl-10 pr-4 py-3 rounded-xl border text-gray-900 text-sm placeholder:text-gray-500 outline-none transition-all duration-200
                       ${errors.fullName
                         ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                        : "border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        : "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                       }`}
                   />
                 </div>
@@ -223,7 +223,7 @@ export default function CreateSuperAdminPage() {
                     className={`w-full pl-10 pr-4 py-3 rounded-xl border text-gray-900 text-sm placeholder:text-gray-500 outline-none transition-all duration-200
                       ${errors.email
                         ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                        : "border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        : "border-gray-200 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                       }`}
                   />
                 </div>
@@ -251,7 +251,7 @@ export default function CreateSuperAdminPage() {
                 type="submit"
                 disabled={loading}
                 className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all duration-200 mt-1 disabled:opacity-80 disabled:cursor-not-allowed"
-                style={{ background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 50%, #1C5AB8 100%)" }}
+                style={{ background: "linear-gradient(135deg, #064e3b 0%, #047857 50%, #1C5AB8 100%)" }}
               >
                 {loading ? (
                   <>

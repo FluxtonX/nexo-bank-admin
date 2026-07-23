@@ -75,10 +75,10 @@ export async function POST(request: Request) {
               <p style="color: #475569; font-size: 16px;">Hello ${admin.full_name || ""},</p>
               <p style="color: #475569; font-size: 16px;">An administrator account has been created for you on the CDNTB Admin Panel. Please click the button below to set up your password and activate your account:</p>
               <div style="text-align: center; margin: 25px 0;">
-                <a href="${inviteLink}" style="background-color: #0A3D91; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block;">Set Up Password</a>
+                <a href="${inviteLink}" style="background-color: #064e3b; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block;">Set Up Password</a>
               </div>
               <p style="color: #475569; font-size: 14px;">If the button above does not work, copy and paste this URL into your browser:</p>
-              <p style="color: #0A3D91; font-size: 13px; word-break: break-all;">${inviteLink}</p>
+              <p style="color: #064e3b; font-size: 13px; word-break: break-all;">${inviteLink}</p>
               <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
               <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
             </div>

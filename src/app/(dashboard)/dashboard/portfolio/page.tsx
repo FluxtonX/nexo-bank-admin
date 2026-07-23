@@ -24,7 +24,7 @@ type AllocationSegment = {
   strokeColor: string;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 export default function PortfolioManagementPage() {
   return (
@@ -323,7 +323,7 @@ function PortfolioManagementPageContent() {
                         onMouseLeave={() => setHoveredSegment(null)}
                         className={cn(
                           "flex items-center justify-between p-3 border border-gray-100 rounded-xl transition-all shadow-sm cursor-pointer",
-                          isHovered ? "bg-gray-50 border-blue-200" : "bg-white"
+                          isHovered ? "bg-gray-50 border-emerald-200" : "bg-white"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -404,7 +404,7 @@ function PortfolioManagementPageContent() {
             )}
 
             <div className="border-t border-gray-100 pt-3 text-xs text-gray-600 font-semibold flex items-center gap-1.5 justify-center">
-              <Activity className="h-4 w-4 text-[#0A3D91]" />
+              <Activity className="h-4 w-4 text-[#064e3b]" />
               Secure audit metrics verified
             </div>
           </div>

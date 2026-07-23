@@ -39,7 +39,7 @@ type InteracPayout = {
   securityAnswer?: string;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 const INITIAL_PAYOUTS: InteracPayout[] = [
   {
@@ -85,7 +85,7 @@ const TABS: Array<{ label: string; value: TabValue }> = [
 function StatusBadge({ status }: { status: PayoutStatus }) {
   const map: Record<PayoutStatus, { cls: string; icon: React.ReactNode }> = {
     Pending: { cls: "bg-amber-50 text-amber-700 border-amber-200", icon: <Clock className="h-3 w-3" /> },
-    Processing: { cls: "bg-blue-50 text-blue-700 border-blue-200", icon: <CreditCard className="h-3 w-3" /> },
+    Processing: { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: <CreditCard className="h-3 w-3" /> },
     Completed: { cls: "bg-green-50 text-green-700 border-green-200", icon: <CheckCircle2 className="h-3 w-3" /> },
     Failed: { cls: "bg-red-50 text-red-700 border-red-200", icon: <XCircle className="h-3 w-3" /> },
   };
@@ -201,7 +201,7 @@ function InteracPayoutsPageContent() {
         value: `$${processingSum.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
         note: `${counts.Processing} in progress`,
         icon: (
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
             <CreditCard className="h-5.5 w-5.5" />
           </div>
         ),
@@ -330,7 +330,7 @@ function InteracPayoutsPageContent() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by user, email, or payout ID..."
-                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 sm:text-base"
+                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 sm:text-base"
               />
               {search && (
                 <button
@@ -357,7 +357,7 @@ function InteracPayoutsPageContent() {
                   className={cn(
                     "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-sm shrink-0",
                     active
-                      ? "bg-[#0A3D91] text-white"
+                      ? "bg-[#064e3b] text-white"
                       : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-700"
                   )}
                 >
@@ -416,7 +416,7 @@ function InteracPayoutsPageContent() {
                   {filteredPayouts.map((payout) => (
                     <div
                       key={payout.payoutId}
-                      className="grid min-w-[1150px] grid-cols-[1.2fr_1.8fr_1.2fr_1.2fr_1.6fr_1.4fr_80px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-blue-50/20"
+                      className="grid min-w-[1150px] grid-cols-[1.2fr_1.8fr_1.2fr_1.2fr_1.6fr_1.4fr_80px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-emerald-50/20"
                     >
                       <div className="font-extrabold text-gray-950 font-mono text-xs">{payout.payoutId}</div>
                       <div className="min-w-0">
@@ -451,7 +451,7 @@ function InteracPayoutsPageContent() {
               Showing <strong className="text-gray-700">{filteredPayouts.length}</strong> of <strong className="text-gray-700">{payouts.length}</strong> payout requests
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
-              <ShieldCheck className="h-4 w-4 text-[#0A3D91]" />
+              <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
               CDNT secure payout authorization queue
             </div>
           </div>
@@ -505,7 +505,7 @@ function InteracPayoutsPageContent() {
                     {/* User info */}
                     <div className="border border-gray-200 bg-white rounded-2xl p-5 space-y-4 shadow-sm">
                       <h3 className="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-1.5">
-                        <User className="h-4.5 w-4.5 text-[#0A3D91]" />
+                        <User className="h-4.5 w-4.5 text-[#064e3b]" />
                         User Recipient
                       </h3>
                       <div className="space-y-3">
@@ -527,7 +527,7 @@ function InteracPayoutsPageContent() {
                     {/* Payout details */}
                     <div className="border border-gray-200 bg-white rounded-2xl p-5 space-y-4 shadow-sm">
                       <h3 className="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-1.5">
-                        <CreditCard className="h-4.5 w-4.5 text-[#0A3D91]" />
+                        <CreditCard className="h-4.5 w-4.5 text-[#064e3b]" />
                         Payout Details
                       </h3>
                       <div className="space-y-3">
@@ -588,7 +588,7 @@ function InteracPayoutsPageContent() {
                     {selectedPayout.status === "Pending" && (
                       <button
                         onClick={() => handleStatusChangeTrigger("Processing")}
-                        className="px-4 py-2 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer"
+                        className="px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer"
                       >
                         Process Payout
                       </button>
@@ -633,7 +633,7 @@ function InteracPayoutsPageContent() {
                   <span className={cn(
                     "font-bold uppercase tracking-wider px-1.5 py-0.5 rounded text-[10px]",
                     showConfirmModal.targetStatus === "Completed" ? "bg-green-50 text-green-700" :
-                    showConfirmModal.targetStatus === "Processing" ? "bg-blue-50 text-blue-700" : "bg-red-50 text-red-700"
+                    showConfirmModal.targetStatus === "Processing" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"
                   )}>
                     {showConfirmModal.targetStatus}
                   </span>

@@ -77,7 +77,7 @@ function StatCard2({
         <p className="text-3xl font-bold text-gray-900">{value}</p>
       </div>
       {link && (
-        <Link href={link} className="text-xs text-blue-600 font-medium hover:underline text-left">
+        <Link href={link} className="text-xs text-emerald-600 font-medium hover:underline text-left">
           {link}
         </Link>
       )}
@@ -174,9 +174,9 @@ export default function DashboardPage() {
               />
               <Line
                 type="monotone" dataKey="users"
-                stroke="#1650AB" strokeWidth={2.5}
-                dot={{ r: 4, fill: "#1650AB", strokeWidth: 0 }}
-                activeDot={{ r: 6, fill: "#1650AB" }}
+                stroke="#047857" strokeWidth={2.5}
+                dot={{ r: 4, fill: "#047857", strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: "#047857" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
               wrapperStyle={{ fontSize: 12, paddingTop: 12 }}
               formatter={(val) => <span className="text-gray-600 capitalize">{val}</span>}
             />
-            <Bar dataKey="deposits"    fill="#1650AB" radius={[4, 4, 0, 0]} name="Deposits" />
+            <Bar dataKey="deposits"    fill="#047857" radius={[4, 4, 0, 0]} name="Deposits" />
             <Bar dataKey="withdrawals" fill="#22C55E" radius={[4, 4, 0, 0]} name="Withdrawals" />
           </BarChart>
         </ResponsiveContainer>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-800">Withdrawal Approval Queue</h3>
-            <Link href="/dashboard/withdrawals" className="text-xs text-blue-600 font-medium hover:underline">View All</Link>
+            <Link href="/dashboard/withdrawals" className="text-xs text-emerald-600 font-medium hover:underline">View All</Link>
           </div>
           <div className="space-y-3">
             {stats.loading ? (
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                 <span className="text-sm font-bold text-gray-900 shrink-0">{item.amount}</span>
                 <button
                   className="text-xs font-semibold text-white px-3 py-1.5 rounded-lg shrink-0 transition-opacity hover:opacity-90"
-                  style={{ background: "linear-gradient(135deg, #0A3D91, #1650AB)" }}
+                  style={{ background: "linear-gradient(135deg, #064e3b, #047857)" }}
                 >
                   Review
                 </button>
@@ -281,7 +281,7 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-800">Recent Transactions</h3>
-            <Link href="/dashboard/transactions" className="text-xs text-blue-600 font-medium hover:underline">View All</Link>
+            <Link href="/dashboard/transactions" className="text-xs text-emerald-600 font-medium hover:underline">View All</Link>
           </div>
           <div className="space-y-3">
             {stats.loading ? (

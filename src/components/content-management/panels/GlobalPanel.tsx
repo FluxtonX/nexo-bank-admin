@@ -14,7 +14,7 @@ import {
 } from "../shared/FieldComponents";
 
 const BANNER_COLORS = [
-  { id: "blue",   bg: "#1650AB" },
+  { id: "blue",   bg: "#047857" },
   { id: "amber",  bg: "#D97706" },
   { id: "green",  bg: "#059669" },
   { id: "red",    bg: "#DC2626" },
@@ -69,7 +69,7 @@ export function GlobalPanel() {
     await updateContentKey("global.header_tagline", headerTagline, "text", "global", "Header Tagline");
   };
 
-  const selectedBg = BANNER_COLORS.find((c) => c.id === bannerColor)?.bg ?? "#1650AB";
+  const selectedBg = BANNER_COLORS.find((c) => c.id === bannerColor)?.bg ?? "#047857";
 
   if (loading) {
     return <div className="text-sm text-gray-500 py-4">Loading Settings...</div>;
@@ -78,7 +78,7 @@ export function GlobalPanel() {
   return (
     <div className="space-y-6">
       {/* Announcement Banner Card */}
-      <div className="rounded-xl border-2 border-blue-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border-2 border-emerald-200 bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-4 flex items-center justify-between" style={{ background: BRAND_GRADIENT }}>
           <div className="flex items-center gap-2.5">
             <Megaphone className="h-[18px] w-[18px] text-white" />
@@ -129,7 +129,7 @@ export function GlobalPanel() {
                 value={bannerUrl}
                 onChange={(e) => setBannerUrl(e.target.value)}
                 placeholder="https://northunion.ca/announcement"
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-8 pr-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-8 pr-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
               />
             </div>
           </div>

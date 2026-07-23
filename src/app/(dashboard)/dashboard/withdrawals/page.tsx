@@ -49,7 +49,7 @@ type WithdrawalRequest = {
   currentBalance: number;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 // Removed INITIAL_REQUESTS to enforce purely live data from Supabase
 
@@ -236,7 +236,7 @@ function WithdrawalRequestsPageContent() {
         value: `$${requests.filter(r => r.status === "Pending").reduce((acc, r) => acc + r.amount, 0).toLocaleString()}`,
         tone: "text-gray-900",
         icon: (
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
             <FileText className="h-6 w-6" />
           </div>
         ),
@@ -371,7 +371,7 @@ function WithdrawalRequestsPageContent() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search..."
-                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 sm:text-base"
+                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 sm:text-base"
               />
               {search && (
                 <button
@@ -398,7 +398,7 @@ function WithdrawalRequestsPageContent() {
                   className={cn(
                     "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all duration-155 cursor-pointer shadow-sm",
                     active
-                      ? "bg-[#0A3D91] text-white"
+                      ? "bg-[#064e3b] text-white"
                       : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-700"
                   )}
                 >
@@ -458,7 +458,7 @@ function WithdrawalRequestsPageContent() {
                   {filteredRequests.map((request) => (
                     <div
                       key={request.requestId}
-                      className="grid min-w-[1150px] grid-cols-[1.1fr_1.8fr_1.3fr_1.1fr_1.1fr_1.1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-blue-50/20"
+                      className="grid min-w-[1150px] grid-cols-[1.1fr_1.8fr_1.3fr_1.1fr_1.1fr_1.1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-emerald-50/20"
                     >
                       <div>
                         <p className="font-extrabold text-gray-950 font-mono tracking-tight text-xs">{request.requestId}</p>
@@ -504,7 +504,7 @@ function WithdrawalRequestsPageContent() {
               Showing <strong className="text-gray-700">{filteredRequests.length}</strong> of <strong className="text-gray-700">{requests.length}</strong> requests
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
-              <ShieldCheck className="h-4 w-4 text-[#0A3D91]" />
+              <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
               CDNT secure withdrawal ledger
             </div>
           </div>
@@ -620,7 +620,7 @@ function WithdrawalRequestsPageContent() {
                         value={currentNote}
                         onChange={(e) => setCurrentNote(e.target.value)}
                         placeholder="Write admin review note or override memo here..."
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-sm outline-none resize-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 text-gray-800 placeholder:text-gray-500"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-sm outline-none resize-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 text-gray-800 placeholder:text-gray-500"
                       />
                     </div>
                   </div>

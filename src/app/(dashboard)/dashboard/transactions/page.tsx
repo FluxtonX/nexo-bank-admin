@@ -54,7 +54,7 @@ type Transaction = {
   feeCad?: number;
 };
 
-const BRAND_GRADIENT = "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)";
+const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
 
 const INITIAL_TRANSACTIONS: Transaction[] = [
   {
@@ -380,7 +380,7 @@ function TransactionsDashboardContent() {
         tone: "text-gray-900",
         badge: { text: "+12.4%", trend: "up" },
         icon: (
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#0A3D91]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-[#064e3b]">
             <Activity className="h-6 w-6" />
           </div>
         ),
@@ -589,7 +589,7 @@ function TransactionsDashboardContent() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by User, Transaction ID, Hash or Cryptocurrency..."
-                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-50 sm:text-base"
+                className="h-14 w-full rounded-xl border border-gray-200 bg-gray-50 pl-12 pr-11 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50 sm:text-base"
               />
               {search && (
                 <button
@@ -616,7 +616,7 @@ function TransactionsDashboardContent() {
                   className={cn(
                     "flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-sm shrink-0",
                     active
-                      ? "bg-[#0A3D91] text-white"
+                      ? "bg-[#064e3b] text-white"
                       : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-700"
                   )}
                 >
@@ -681,7 +681,7 @@ function TransactionsDashboardContent() {
                   {filteredTransactions.map((tx) => (
                     <div
                       key={tx.txId}
-                      className="grid min-w-[1250px] grid-cols-[1.1fr_1.8fr_1fr_1.2fr_1.2fr_1.1fr_1.1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-blue-50/20"
+                      className="grid min-w-[1250px] grid-cols-[1.1fr_1.8fr_1fr_1.2fr_1.2fr_1.1fr_1.1fr_1.6fr_120px] items-center gap-4 border-b border-gray-100 bg-white px-5 py-4 transition-colors hover:bg-emerald-50/20"
                     >
                       {/* TRANSACTION ID */}
                       <div>
@@ -752,7 +752,7 @@ function TransactionsDashboardContent() {
               Showing <strong className="text-gray-700">{filteredTransactions.length}</strong> of <strong className="text-gray-700">{transactions.length}</strong> transactions
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
-              <ShieldCheck className="h-4 w-4 text-[#0A3D91]" />
+              <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
               CDNT secure real-time transaction queue
             </div>
           </div>
@@ -867,7 +867,7 @@ function TransactionsDashboardContent() {
                   {/* Blockchain Details Section */}
                   <div className="border border-gray-200 bg-gray-50/50 rounded-2xl p-5 space-y-4 shadow-sm">
                     <h3 className="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-                      <Coins className="h-4.5 w-4.5 text-[#0A3D91]" />
+                      <Coins className="h-4.5 w-4.5 text-[#064e3b]" />
                       Blockchain Specifics
                     </h3>
                     <div className="space-y-3.5">
