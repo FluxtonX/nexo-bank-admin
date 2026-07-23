@@ -92,7 +92,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               )}
               style={
                 isActive
-                  ? { background: "linear-gradient(135deg, #0A3D91 0%, #1650AB 100%)" }
+                  ? { background: "linear-gradient(135deg, #064e3b 0%, #047857 100%)" }
                   : {}
               }
             >

@@ -61,17 +61,17 @@ export function PageLoader() {
       <div className="flex flex-col items-center gap-6">
         {/* Animated logo mark */}
         <div className="relative">
-          <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-glow-lg animate-pulse">
+          <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 flex items-center justify-center shadow-glow-lg animate-pulse">
             <span className="text-white font-bold text-xl tracking-tight">Nexo Bank</span>
           </div>
           {/* Spinning ring */}
-          <div className="absolute -inset-2 rounded-3xl border-2 border-transparent border-t-indigo-500 border-r-purple-500 animate-spin" />
+          <div className="absolute -inset-2 rounded-3xl border-2 border-transparent border-t-emerald-500 border-r-emerald-400 animate-spin" />
         </div>
 
         {/* Progress bar */}
         <div className="w-48 h-1 rounded-full bg-surface-800 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+            className="h-full bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-full"
             style={{ animation: "progress-fill 1.4s ease-in-out infinite" }}
           />
         </div>
@@ -96,7 +96,7 @@ export function Spinner({ size = "md", className }: { size?: "sm" | "md" | "lg";
   return (
     <div
       className={cn(
-        "rounded-full border-slate-700 border-t-indigo-500 animate-spin",
+        "rounded-full border-slate-700 border-t-emerald-500 animate-spin",
         sizes[size],
         className
       )}

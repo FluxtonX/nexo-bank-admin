@@ -149,7 +149,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
             placeholder="Search users, transactions, requests..."
             readOnly
             onClick={() => setSearchOpen(true)}
-            className="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-700 placeholder:text-gray-500 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer"
+            className="w-full pl-9 pr-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-700 placeholder:text-gray-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all cursor-pointer"
           />
           <kbd className="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 text-[10px] font-mono font-semibold">
             ⌘K
@@ -188,7 +188,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
                   {unreadCount > 0 && (
                     <button
                       onClick={() => markAsRead.mutate(undefined)}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                      className="text-xs font-bold text-emerald-700 hover:text-emerald-900 transition-colors cursor-pointer"
                     >
                       Mark all as read
                     </button>
@@ -211,7 +211,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
                         <div
                           key={n.id}
                           onClick={() => handleNotificationClick(n)}
-                          className={`p-4 flex gap-3 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-0 ${!n.is_read ? "bg-blue-50/20" : ""}`}
+                          className={`p-4 flex gap-3 hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-0 ${!n.is_read ? "bg-emerald-50/20" : ""}`}
                         >
                           <div
                             className={`grid h-8 w-8 place-items-center rounded-lg shrink-0 ${
@@ -235,7 +235,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
                           </div>
                           {!n.is_read && (
                             <div className="flex items-center">
-                              <span className="h-2 w-2 rounded-full bg-blue-500"></span>
+                              <span className="h-2 w-2 rounded-full bg-emerald-600"></span>
                             </div>
                           )}
                         </div>
@@ -250,7 +250,7 @@ export function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
                       setNotificationsOpen(false);
                       router.push('/dashboard/admin-notifications');
                     }}
-                    className="w-full text-center py-2.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors"
+                    className="w-full text-center py-2.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 transition-colors"
                   >
                     View all notifications
                   </button>
