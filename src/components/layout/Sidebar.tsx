@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAdminPermissions } from "@/hooks/useAdminPermissions";
 import { NAV_PERMISSION_MAP } from "@/lib/permissions";
+import NexoBankLogoDarkGreen from "@/components/ui/NexoBankLogoDarkGreen";
 
 const NAV_ITEMS = [
   { id: "dashboard",     label: "Dashboard",           href: "/dashboard",              icon: LayoutDashboard },
@@ -64,11 +65,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     <>
       {/* Brand */}
       <div className="flex flex-col px-4 py-5 border-b border-gray-100 gap-1.5 justify-center shrink-0">
-        <img
-          src="/CDNTlogo.png"
-          alt="Nexo Bank Logo"
-          className="h-9 w-auto object-contain self-start"
-        />
+        <NexoBankLogoDarkGreen className="h-9 w-auto self-start" />
         <p className="text-[10px] text-gray-600 font-bold uppercase tracking-wider pl-0.5">Admin Portal</p>
       </div>
 
