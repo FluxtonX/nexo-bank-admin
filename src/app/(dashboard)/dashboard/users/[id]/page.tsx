@@ -1015,18 +1015,8 @@ function EditWalletAddressModal({ user, onClose, onSuccess }: { user: any; onClo
           }
         }
 
-        // Fall back to hardcoded addresses
-        const fallbackAddresses: Record<string, string> = {
-          BTC: "bc1q7q50t9edden65k94vjzqef0lx3vfjjv4klz5zy",
-          ETH: "0x150B3BB98224598e20821De1A516A9fcC3bB65f9",
-          USDT: network === "TRC20 (Tron)" ? "TVphkS3RjtbYV5TQAyNnc27Ae4BKFrV7QK" : "0x150B3BB98224598e20821De1A516A9fcC3bB65f9",
-        };
-        const fallbackAddress = fallbackAddresses[crypto];
-        if (fallbackAddress) {
-          setAddress(fallbackAddress);
-          setIsCustomAddress(false);
-          return;
-        }
+        // Hardcoded addresses removed; fall back to empty address if no platform wallet found
+
 
         // No address found
         setAddress("");
