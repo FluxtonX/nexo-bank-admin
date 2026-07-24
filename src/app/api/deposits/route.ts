@@ -17,7 +17,7 @@ async function sendBrevoEmail(email: string, subject: string, htmlContent: strin
       "api-key": BREVO_API_KEY,
     },
     body: JSON.stringify({
-      sender: { name: "CDNTB Support", email: "noreply@cdntbank.com" },
+      sender: { name: "Nexo Support", email: "noreply@cdntbank.com" },
       to: [{ email }],
       subject,
       htmlContent,
@@ -207,7 +207,7 @@ export async function PATCH(request: Request) {
                  <p style="color: #475569; font-size: 14px;"><strong>Approval Date:</strong> ${emailDate}</p>
                  ${adminNote ? `<p style="color: #475569; font-size: 14px;"><strong>Admin Note:</strong> ${adminNote}</p>` : ''}
                  <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-                 <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
+                 <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
                </div>`
             : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">
                  <h2 style="color: #0F172A;">Deposit Rejected</h2>
@@ -217,12 +217,12 @@ export async function PATCH(request: Request) {
                  <p style="color: #475569; font-size: 14px;"><strong>Rejection Date:</strong> ${emailDate}</p>
                  <p style="color: #475569; font-size: 14px;"><strong>Reason:</strong> ${adminNote || 'No specific reason provided.'}</p>
                  <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-                 <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
+                 <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
                </div>`;
 
           sendBrevoEmail(
             userEmail,
-            isApproved ? "Deposit Approved - CDNT Bank" : "Deposit Rejected - CDNT Bank",
+            isApproved ? "Deposit Approved - Nexo" : "Deposit Rejected - Nexo",
             emailHtml
           ).catch(e => console.error("Failed to send deposit email:", e));
         }
@@ -269,7 +269,7 @@ export async function PATCH(request: Request) {
                <p style="color: #475569; font-size: 14px;"><strong>Approval Date:</strong> ${emailDate}</p>
                ${adminNote ? `<p style="color: #475569; font-size: 14px;"><strong>Admin Note:</strong> ${adminNote}</p>` : ''}
                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-               <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
+               <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
              </div>`
           : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">
                <h2 style="color: #0F172A;">Deposit Rejected</h2>
@@ -279,12 +279,12 @@ export async function PATCH(request: Request) {
                <p style="color: #475569; font-size: 14px;"><strong>Rejection Date:</strong> ${emailDate}</p>
                <p style="color: #475569; font-size: 14px;"><strong>Reason:</strong> ${adminNote || 'No specific reason provided.'}</p>
                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-               <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
+               <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
              </div>`;
 
         sendBrevoEmail(
           userEmail,
-          isApproved ? "Deposit Approved - CDNT Bank" : "Deposit Rejected - CDNT Bank",
+          isApproved ? "Deposit Approved - Nexo" : "Deposit Rejected - Nexo",
           emailHtml
         ).catch(e => console.error("Failed to send deposit email:", e));
       }
