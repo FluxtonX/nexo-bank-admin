@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Filter, Download, UserPlus, ChevronLeft, ChevronRight,
   CheckCircle2, Clock, XCircle, AlertTriangle, Shield, X,
-  User, Mail, Phone, Lock, Unlock, MoreVertical, FileEdit, Eye,
+  User, Mail, Phone, Lock, Unlock, MoreVertical, FileEdit, Eye, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AdminUser, type KycStatus, type AccountStatus, type RiskLevel } from "@/lib/data/users";
@@ -366,11 +366,13 @@ function UserRow({
   onView,
   onFreeze,
   onNote,
+  onDelete,
 }: {
   user: AdminUser;
   onView: () => void;
   onFreeze: () => void;
   onNote: () => void;
+  onDelete: () => void;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useClickOutside<HTMLDivElement>(() => setIsMenuOpen(false));
@@ -461,6 +463,12 @@ function UserRow({
                   </>
                 )}
               </button>
+              <button
+                onClick={() => { onDelete(); setIsMenuOpen(false); }}
+                className="w-full text-left px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-gray-50"
+              >
+                <Trash2 className="h-3.5 w-3.5 text-red-650" /> Delete User
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -489,7 +497,10 @@ function UsersPageContent() {
   const [showAddUser, setShowAddUser] = useState(false);
   const [activeUserForFreeze, setActiveUserForFreeze] = useState<AdminUser | null>(null);
   const [activeUserForNote, setActiveUserForNote] = useState<AdminUser | null>(null);
+  const [activeUserForDelete, setActiveUserForDelete] = useState<AdminUser | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   
   const filterRef = useClickOutside<HTMLDivElement>(() => setIsFilterOpen(false));
 
@@ -733,6 +744,7 @@ function UsersPageContent() {
                       }
                     }}
                     onNote={() => setActiveUserForNote(user)}
+                    onDelete={() => setActiveUserForDelete(user)}
                   />
                 ))}
               </motion.div>
@@ -805,7 +817,42 @@ function UsersPageContent() {
             onClose={() => setActiveUserForNote(null)}
             onConfirm={(note) => {
               setActiveUserForNote(null);
+              setToastType("success");
               setToastMsg("Note saved successfully ✓");
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {activeUserForDelete && (
+          <DeleteUserModal
+            user={activeUserForDelete}
+            loading={isDeleting}
+            onClose={() => setActiveUserForDelete(null)}
+            onConfirm={async () => {
+              setIsDeleting(true);
+              try {
+                const res = await fetch(`/api/users/${activeUserForDelete.id}`, {
+                  method: "DELETE",
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                  throw new Error(data.error || "Failed to delete user");
+                }
+                
+                setToastType("success");
+                setToastMsg("User and all related data deleted ✓");
+                setActiveUserForDelete(null);
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              } catch (err: any) {
+                setToastType("error");
+                setToastMsg(err.message || "Failed to delete user");
+              } finally {
+                setIsDeleting(false);
+              }
             }}
           />
         )}
@@ -818,12 +865,115 @@ function UsersPageContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-gray-900 text-white text-sm font-medium rounded-xl shadow-xl"
+            className={cn(
+              "fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 text-white text-sm font-medium rounded-xl shadow-xl",
+              toastType === "error" ? "bg-red-650" : "bg-gray-900"
+            )}
           >
-            <CheckCircle2 className="h-4 w-4 text-green-400" /> {toastMsg}
+            {toastType === "error" ? (
+              <XCircle className="h-4 w-4 text-white" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 text-green-400" />
+            )}
+            {toastMsg}
           </motion.div>
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+/* ─── Delete User Modal ─── */
+function DeleteUserModal({
+  user,
+  loading,
+  onClose,
+  onConfirm,
+}: {
+  user: AdminUser;
+  loading: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const [emailInput, setEmailInput] = useState("");
+  const match = emailInput.trim().toLowerCase() === user.email.trim().toLowerCase();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}
+      onClick={(e) => e.target === e.currentTarget && !loading && onClose()}
+    >
+      <motion.div
+        initial={{ scale: 0.92, opacity: 0, y: 16 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0, y: 16 }}
+        transition={{ type: "spring", damping: 28, stiffness: 340 }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+      >
+        <div className="p-6">
+          <div className="flex items-start gap-4 mb-5">
+            <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <div className="pt-0.5">
+              <h2 className="text-[17px] font-bold text-red-600">Delete User Account</h2>
+              <p className="text-xs text-gray-650 mt-0.5">Warning: Extremely critical action</p>
+            </div>
+          </div>
+
+          <div className="space-y-4 mb-6">
+            <div className="bg-red-50/50 border border-red-100 rounded-xl p-4 text-xs text-red-800 space-y-2">
+              <p className="font-bold">This action is permanent and cannot be undone.</p>
+              <p>All data related to this user — wallets, deposits, withdrawals, transactions, KYC submissions, notifications, sessions, and wallet addresses — will be permanently deleted.</p>
+            </div>
+
+            <div className="border border-gray-100 bg-gray-50 rounded-xl p-3">
+              <p className="text-[10px] uppercase font-bold text-gray-600 tracking-wider">Target User</p>
+              <p className="text-sm font-semibold text-gray-900 mt-0.5">{user.name}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-700">
+                To confirm, type the user's email address below:
+              </label>
+              <input
+                type="text"
+                placeholder={user.email}
+                value={emailInput}
+                disabled={loading}
+                onChange={(e) => setEmailInput(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={loading || !match}
+              className="flex-1 py-3 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-40 transition-all flex items-center justify-center gap-1.5"
+              style={{ background: "#DC2626" }}
+            >
+              {loading ? (
+                <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+              ) : null}
+              {loading ? "Deleting…" : "Yes, Delete Permanently"}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

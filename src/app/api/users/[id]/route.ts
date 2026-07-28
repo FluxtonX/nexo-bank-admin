@@ -148,3 +148,55 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { allowed } = await checkAdminPermission(request, "delete-users");
+    if (!allowed) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { id: userId } = await context.params;
+    if (!userId) {
+      return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
+    }
+
+    const supabaseAdmin = createAdminClient();
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: authError?.message || "User does not exist in Auth" },
+        { status: 404 }
+      );
+    }
+
+    const { error: rpcError } = await supabaseAdmin.rpc("delete_user_cascade", {
+      target_user_id: userId,
+      target_email: user.email,
+    });
+
+    if (rpcError) {
+      console.error("[DELETE USER] Database transactional RPC failed:", rpcError);
+      throw new Error(`Database transaction failed: ${rpcError.message}`);
+    }
+
+    const { error: deleteAuthError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    if (deleteAuthError) {
+      console.error("[DELETE USER] Failed to delete Auth user:", deleteAuthError);
+      throw new Error(`Failed to delete Auth account: ${deleteAuthError.message}`);
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("[DELETE USER ERROR]:", error);
+    return NextResponse.json(
+      { error: error.message || "An unexpected error occurred during user deletion" },
+      { status: 500 }
+    );
+  }
+}
+
