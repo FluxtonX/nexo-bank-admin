@@ -66,7 +66,7 @@ export async function POST(request: Request) {
           "api-key": BREVO_API_KEY,
         },
         body: JSON.stringify({
-          sender: { name: "CDNTB Security", email: "noreply@cdntbank.com" },
+          sender: { name: "CDNTB Security", email: "noreply@ndntbank.com" },
           to: [{ email }],
           subject: "Set up your CDNT Admin account",
           htmlContent: `

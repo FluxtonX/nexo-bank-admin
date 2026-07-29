@@ -23,7 +23,7 @@ async function sendBrevoEmail(
       "api-key": BREVO_API_KEY,
     },
     body: JSON.stringify({
-      sender: { name: "Nexo Support", email: "noreply@cdntbank.com" },
+      sender: { name: "Nexo Support", email: "noreply@ndntbank.com" },
       to: [{ email, name }],
       subject,
       htmlContent,

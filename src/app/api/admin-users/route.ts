@@ -22,7 +22,7 @@ async function sendInviteEmail(email: string, fullName: string, inviteLink: stri
       "api-key": BREVO_API_KEY,
     },
     body: JSON.stringify({
-      sender: { name: "CDNTB Security", email: "noreply@cdntbank.com" },
+      sender: { name: "CDNTB Security", email: "noreply@ndntbank.com" },
       to: [{ email }],
       subject: "Set up your CDNT Admin account",
       htmlContent: `
