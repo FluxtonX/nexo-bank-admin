@@ -2,7 +2,7 @@
  * Application-wide constants
  */
 
-export const APP_NAME = "CDNTB Admin";
+export const APP_NAME = "Nexo Bank Admin";
 export const APP_VERSION = "1.0.0";
 
 export const SIDEBAR_WIDTH = 260;
