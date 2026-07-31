@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Modern admin dashboard panel for Nexo Bank platform management.",
   robots: "noindex, nofollow",
   icons: {
-    icon: "/logos/nexo-logo-darkgreen.svg",
+    icon: "/logos/nexo-favicon.svg",
   },
 };
 

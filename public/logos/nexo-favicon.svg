@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52 16 88 88" width="100%" height="100%">
+  <!-- Interlocking N & B Geometric Emblem -->
+  <g fill="none" stroke="#064e3b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- N Left Vertical Bar -->
+    <line x1="60" y1="28" x2="60" y2="92" />
+    <!-- N Diagonal Stroke -->
+    <line x1="60" y1="28" x2="100" y2="92" />
+    <!-- Shared Stem / N Right & B Left Vertical -->
+    <line x1="100" y1="28" x2="100" y2="92" />
+    <!-- B Upper Loop -->
+    <path d="M 100 28 C 132 28, 132 60, 100 60" />
+    <!-- B Lower Loop -->
+    <path d="M 100 60 C 136 60, 136 92, 100 92" />
+  </g>
+
+  <!-- Accent Dot -->
+  <circle cx="132" cy="28" r="4" fill="#047857" />
+</svg>
