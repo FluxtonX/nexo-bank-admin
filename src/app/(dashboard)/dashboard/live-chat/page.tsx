@@ -149,6 +149,9 @@ function LiveChatSupportPageContent() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState<string>("");
   const [deleteModalMsg, setDeleteModalMsg] = useState<{ id: string; isAdmin: boolean } | null>(null);
+  const [deleteThreadId, setDeleteThreadId] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -165,24 +168,27 @@ function LiveChatSupportPageContent() {
 
         // Fetch auth users (with resolved full names from kyc/profiles/email)
         let authUsersMap: Record<string, { email: string; fullName: string; kycSelfieUrl: string | null; googleAvatarUrl: string | null }> = {};
-        try {
-          const res = await fetch("/api/support/users");
-          if (res.ok) {
-            const usersData = await res.json();
-            authUsersMap = usersData.reduce(
-              (acc: Record<string, { email: string; fullName: string; kycSelfieUrl: string | null; googleAvatarUrl: string | null }>, u: { id: string; email: string; full_name: string | null; kyc_selfie_url: string | null; google_avatar_url: string | null }) => {
-                acc[u.id] = {
-                  email: u.email,
-                  fullName: u.full_name || u.email?.split("@")[0] || "Unknown User",
-                  kycSelfieUrl: u.kyc_selfie_url || null,
-                  googleAvatarUrl: u.google_avatar_url || null,
-                };
-                return acc;
-              },
-              {}
-            );
-          }
-        } catch { /* silently fallback */ }
+        if (data && data.length > 0) {
+          try {
+            const userIds = Array.from(new Set(data.map((t: any) => t.user_id))).join(",");
+            const res = await fetch(`/api/support/users?ids=${userIds}`);
+            if (res.ok) {
+              const usersData = await res.json();
+              authUsersMap = usersData.reduce(
+                (acc: Record<string, { email: string; fullName: string; kycSelfieUrl: string | null; googleAvatarUrl: string | null }>, u: { id: string; email: string; full_name: string | null; kyc_selfie_url: string | null; google_avatar_url: string | null }) => {
+                  acc[u.id] = {
+                    email: u.email,
+                    fullName: u.full_name || u.email?.split("@")[0] || "Unknown User",
+                    kycSelfieUrl: u.kyc_selfie_url || null,
+                    googleAvatarUrl: u.google_avatar_url || null,
+                  };
+                  return acc;
+                },
+                {}
+              );
+            }
+          } catch { /* silently fallback */ }
+        }
 
         if (error) throw error;
 
@@ -608,27 +614,69 @@ function LiveChatSupportPageContent() {
     }
   };
 
-  /* Delete Chat Thread */
-  const handleDeleteThread = async (threadId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // prevent setting as active thread
-    if (!confirm("Are you sure you want to delete this conversation permanently?")) return;
-    
+  /* Delete Chat Thread — shows confirm modal first */
+  const handleDeleteThread = (threadId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteThreadId(threadId);
+  };
+
+  const confirmDeleteThread = async () => {
+    if (!deleteThreadId) return;
+    const threadId = deleteThreadId;
+    setDeleteThreadId(null);
     setDeletingThread(threadId);
     try {
       const res = await fetch(`/api/support/tickets/${threadId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete thread");
-      
       setThreads((current) => current.filter((t) => t.threadId !== threadId));
-      if (activeThreadId === threadId) {
-        setActiveThreadId("");
-      }
+      if (activeThreadId === threadId) setActiveThreadId("");
     } catch (err) {
       console.error("Error deleting support thread:", err);
-      alert("Failed to delete the conversation.");
     } finally {
       setDeletingThread(null);
     }
   };
+
+  /* Start new conversation with a platform user */
+  const handleStartConversation = async (userId: string, userName: string, userEmail: string) => {
+    const existing = threads.find((t) => t.user.id === userId);
+    if (existing) {
+      setActiveThreadId(existing.threadId);
+      setSearch("");
+      setSearchResults([]);
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from("support_threads")
+        .insert({ user_id: userId, status: "Active", unread_count_admin: 0, unread_count_user: 0 })
+        .select()
+        .single();
+      if (error) throw error;
+      const newThread: ChatThread = {
+        threadId: data.id,
+        user: {
+          id: userId, name: userName, email: userEmail, phone: "N/A",
+          kyc: "Not Started", account: "Active", balance: 0, joinedDate: "",
+          risk: "Low Risk", dateOfBirth: "", street: "", city: "", postalCode: "",
+          country: "", lastLogin: "",
+        },
+        status: "Active",
+        unreadCount: 0,
+        unreadCountUser: 0,
+        lastMessageTime: "Now",
+        messages: [],
+        lastMessageAtISO: new Date().toISOString(),
+      };
+      setThreads((current) => [newThread, ...current]);
+      setActiveThreadId(data.id);
+      setSearch("");
+      setSearchResults([]);
+    } catch (err) {
+      console.error("Error starting new conversation:", err);
+    }
+  };
+
 
   /* Toggle Chat Status override */
   const handleSetStatus = async (status: ChatStatus) => {
@@ -671,13 +719,56 @@ function LiveChatSupportPageContent() {
             <div className="p-4 border-b border-gray-200 bg-white">
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+                {searching && <Loader2 className="absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-emerald-500 animate-spin" />}
                 <input
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search conversations..."
-                  className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-xs text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
+                  onChange={async (e) => {
+                    const q = e.target.value;
+                    setSearch(q);
+                    if (!q.trim()) { setSearchResults([]); return; }
+                    setSearching(true);
+                    try {
+                      const res = await fetch(`/api/support/users?q=${encodeURIComponent(q.trim())}`);
+                      if (res.ok) setSearchResults(await res.json());
+                    } catch { /* ignore */ }
+                    finally { setSearching(false); }
+                  }}
+                  placeholder="Search all users..."
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-8 text-xs text-gray-800 outline-none transition-all placeholder:text-gray-500 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-50"
                 />
               </div>
+              {/* Global user search results dropdown */}
+              {search.trim() && searchResults.length > 0 && (
+                <div className="mt-2 max-h-52 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg divide-y divide-gray-100">
+                  {searchResults.map((u: any) => {
+                    const hasThread = threads.some((t) => t.user.id === u.id);
+                    return (
+                      <button
+                        key={u.id}
+                        onClick={() => handleStartConversation(u.id, u.full_name || u.email, u.email)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-emerald-50 transition-colors text-left"
+                      >
+                        <div className="h-7 w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs shrink-0">
+                          {(u.full_name || u.email || "U")[0].toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-gray-900 truncate">{u.full_name || "Unknown"}</p>
+                          <p className="text-[10px] text-gray-500 truncate">{u.email}</p>
+                        </div>
+                        <span className={cn(
+                          "text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0",
+                          hasThread ? "bg-gray-100 text-gray-600" : "bg-emerald-600 text-white"
+                        )}>
+                          {hasThread ? "Open" : "New"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              {search.trim() && !searching && searchResults.length === 0 && (
+                <p className="mt-2 text-center text-[11px] text-gray-500 font-medium">No users found</p>
+              )}
             </div>
 
             {/* List */}
@@ -1019,6 +1110,83 @@ function LiveChatSupportPageContent() {
                 </button>
                 <button
                   onClick={() => setDeleteModalMsg(null)}
+                  className="w-full py-2.5 px-4 border border-gray-200 text-gray-600 hover:text-gray-800 text-xs font-bold rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      <AnimatePresence>
+        {deleteModalMsg && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", duration: 0.25 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-gray-100 space-y-4"
+            >
+              <h3 className="font-extrabold text-gray-900 text-sm">Delete message?</h3>
+              <p className="text-xs text-gray-600 font-medium">Are you sure you want to delete this message?</p>
+              <div className="flex flex-col gap-2 pt-2">
+                {deleteModalMsg.isAdmin && (
+                  <button
+                    onClick={async () => {
+                      const msgId = deleteModalMsg.id;
+                      setDeleteModalMsg(null);
+                      await handleDeleteMessageEveryone(msgId);
+                    }}
+                    className="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+                  >
+                    Delete for everyone
+                  </button>
+                )}
+                <button
+                  onClick={async () => {
+                    const msgId = deleteModalMsg.id;
+                    setDeleteModalMsg(null);
+                    await handleDeleteMessageMe(msgId);
+                  }}
+                  className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all"
+                >
+                  Delete for me
+                </button>
+                <button
+                  onClick={() => setDeleteModalMsg(null)}
+                  className="w-full py-2.5 px-4 border border-gray-200 text-gray-600 hover:text-gray-800 text-xs font-bold rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Thread Confirmation Modal */}
+      <AnimatePresence>
+        {deleteThreadId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", duration: 0.25 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-gray-100 space-y-4"
+            >
+              <h3 className="font-extrabold text-gray-900 text-sm">Delete conversation?</h3>
+              <p className="text-xs text-gray-600 font-medium">This will permanently delete the entire conversation and all its messages. This cannot be undone.</p>
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={confirmDeleteThread}
+                  className="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+                >
+                  Yes, delete conversation
+                </button>
+                <button
+                  onClick={() => setDeleteThreadId(null)}
                   className="w-full py-2.5 px-4 border border-gray-200 text-gray-600 hover:text-gray-800 text-xs font-bold rounded-xl transition-all"
                 >
                   Cancel

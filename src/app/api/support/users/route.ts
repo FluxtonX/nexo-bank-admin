@@ -13,23 +13,37 @@ export async function GET(request: Request) {
   try {
     const { allowed } = await checkAdminPermission(request, "respond-chat");
     if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const { searchParams } = new URL(request.url);
+    const idsParam = searchParams.get("ids");
+    const userIds = idsParam ? idsParam.split(",").filter(Boolean) : [];
+    const searchQuery = searchParams.get("q");
+
     const supabaseAdmin = createAdminClient();
 
-    const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers();
-    if (error) throw error;
+    // Query profiles and KYC submissions (filtering by requested IDs or search query)
+    let profilesQuery = supabaseAdmin.from("profiles").select("id, full_name, email");
+    let kycQuery = supabaseAdmin.from("kyc_submissions").select("user_id, full_name, selfie_url, status");
 
-    // Fetch KYC submissions with selfie_url and status
-    const { data: kycData } = await supabaseAdmin
-      .from("kyc_submissions")
-      .select("user_id, full_name, selfie_url, status");
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("id, full_name");
+    if (userIds.length > 0) {
+      profilesQuery = profilesQuery.in("id", userIds);
+      kycQuery = kycQuery.in("user_id", userIds);
+    } else if (searchQuery) {
+      profilesQuery = profilesQuery.or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
+    }
 
-    // Generate signed URLs for KYC selfies
+    const [profilesResult, kycResult] = await Promise.all([profilesQuery, kycQuery]);
+    
+    if (profilesResult.error) throw profilesResult.error;
+
+    const profiles = profilesResult.data || [];
+    const kycData = kycResult.data || [];
+
+    // Generate signed URLs for KYC selfies *only* for the fetched users
     const kycDataWithSignedUrls = await Promise.all(
-      (kycData || []).map(async (kyc) => {
+      kycData.map(async (kyc) => {
         if (kyc.selfie_url && kyc.status === "approved") {
           try {
-            // Extract the file path from the public URL
             const url = new URL(kyc.selfie_url);
             const pathParts = url.pathname.split('/kyc-documents/');
             if (pathParts.length > 1) {
@@ -52,28 +66,15 @@ export async function GET(request: Request) {
       })
     );
 
-    const mapped = users.map((u) => {
-      const kyc = kycDataWithSignedUrls?.find((k) => k.user_id === u.id);
-      const profile = profiles?.find((p) => p.id === u.id);
-      
-      // Debug: log user_metadata for all users to see avatar_url
-      console.log(`[support/users API] User ${u.email} (${u.id}) user_metadata:`, {
-        avatar_url: u.user_metadata?.avatar_url,
-        full_metadata: u.user_metadata,
-      });
-      
-      // Priority 1: KYC selfie (only if approved) - use signed URL
-      const kycSelfieUrl = kyc?.status === "approved" ? kyc.signed_selfie_url : null;
-      
-      // Priority 2: Google avatar from auth metadata
-      const googleAvatarUrl = u.user_metadata?.avatar_url || null;
+    const mapped = profiles.map((p) => {
+      const kyc = kycDataWithSignedUrls.find((k) => k.user_id === p.id);
       
       return {
-        id: u.id,
-        email: u.email || "",
-        full_name: kyc?.full_name || profile?.full_name || u.email || null,
-        kyc_selfie_url: kycSelfieUrl,
-        google_avatar_url: googleAvatarUrl,
+        id: p.id,
+        email: p.email || "",
+        full_name: kyc?.full_name || p.full_name || p.email || "Unknown User",
+        kyc_selfie_url: kyc?.status === "approved" ? kyc.signed_selfie_url : null,
+        google_avatar_url: null, // Resolved from client or fallbacks
       };
     });
 
