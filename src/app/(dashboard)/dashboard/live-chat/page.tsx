@@ -19,6 +19,8 @@ import {
   CheckCheck,
   ShieldCheck,
   Loader2,
+  Edit2,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AdminUser } from "@/lib/data/users";
@@ -32,6 +34,8 @@ type Message = {
   sender: "Client" | "Admin";
   text: string;
   timestamp: string;
+  is_edited?: boolean;
+  deleted_for_admin?: boolean;
 };
 
 type ChatThread = {
@@ -142,6 +146,8 @@ function LiveChatSupportPageContent() {
   const [loading, setLoading] = useState(true);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [deletingThread, setDeletingThread] = useState<string | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState<string>("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -253,12 +259,15 @@ function LiveChatSupportPageContent() {
         if (error) throw error;
 
         if (data) {
-          const mappedMsgs: Message[] = data.map((m: any) => ({
-            id: m.id,
-            sender: m.sender as "Client" | "Admin",
-            text: m.text,
-            timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          }));
+          const mappedMsgs: Message[] = data
+            .filter((m: any) => !m.deleted_for_admin)
+            .map((m: any) => ({
+              id: m.id,
+              sender: m.sender as "Client" | "Admin",
+              text: m.text,
+              timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              is_edited: m.is_edited,
+            }));
 
           setThreads((current) =>
             current.map((t) => (t.threadId === activeThreadId ? { ...t, messages: mappedMsgs } : t))
@@ -287,43 +296,77 @@ function LiveChatSupportPageContent() {
 
   // Real-Time Subscriptions
   useEffect(() => {
-    // 1. Listen for new messages
+    // 1. Listen for new, edited, and deleted messages
     const messagesChannel = supabase
       .channel("support_messages_admin")
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "support_messages",
         },
         (payload) => {
+          const eventType = payload.eventType;
+
+          if (eventType === "DELETE") {
+            const deletedId = payload.old.id;
+            setThreads((current) =>
+              current.map((t) => ({
+                ...t,
+                messages: t.messages.filter((m) => m.id !== deletedId),
+              }))
+            );
+            return;
+          }
+
           const newMsg = payload.new as any;
           const msgThreadId = newMsg.thread_id;
+
+          if (newMsg.deleted_for_admin) {
+            setThreads((current) =>
+              current.map((t) => {
+                if (t.threadId === msgThreadId) {
+                  return {
+                    ...t,
+                    messages: t.messages.filter((m) => m.id !== newMsg.id),
+                  };
+                }
+                return t;
+              })
+            );
+            return;
+          }
 
           const formattedMsg: Message = {
             id: newMsg.id,
             sender: newMsg.sender as "Client" | "Admin",
             text: newMsg.text,
             timestamp: new Date(newMsg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            is_edited: newMsg.is_edited,
           };
 
           setThreads((current) =>
             current.map((t) => {
               if (t.threadId === msgThreadId) {
-                const alreadyHas = t.messages.some((m) => m.id === newMsg.id);
-                if (alreadyHas) return t;
-                return {
-                  ...t,
-                  messages: [...t.messages, formattedMsg],
-                };
+                const index = t.messages.findIndex((m) => m.id === newMsg.id);
+                if (index !== -1) {
+                  const updatedMsgs = [...t.messages];
+                  updatedMsgs[index] = formattedMsg;
+                  return { ...t, messages: updatedMsgs };
+                } else {
+                  return {
+                    ...t,
+                    messages: [...t.messages, formattedMsg],
+                  };
+                }
               }
               return t;
             })
           );
 
           // If the message is in the active thread and from Client, clear unread count
-          if (newMsg.sender === "Client" && msgThreadId === activeThreadId) {
+          if (newMsg.sender === "Client" && msgThreadId === activeThreadId && eventType === "INSERT") {
             supabase
               .from("support_threads")
               .update({ unread_count_admin: 0 })
@@ -481,6 +524,86 @@ function LiveChatSupportPageContent() {
       );
     } catch (err) {
       console.error("Error sending support response:", err);
+    }
+  };
+
+  /* Edit Message */
+  const handleEditMessage = async (messageId: string, newText: string) => {
+    try {
+      const { error } = await supabase
+        .from("support_messages")
+        .update({ text: newText, is_edited: true })
+        .eq("id", messageId);
+      if (error) throw error;
+
+      // Update state immediately for visual responsiveness
+      setThreads((current) =>
+        current.map((t) => {
+          if (t.threadId === activeThreadId) {
+            return {
+              ...t,
+              messages: t.messages.map((m) =>
+                m.id === messageId ? { ...m, text: newText, is_edited: true } : m
+              ),
+            };
+          }
+          return t;
+        })
+      );
+    } catch (err) {
+      console.error("Error editing message:", err);
+    }
+  };
+
+  /* Delete Message for Everyone */
+  const handleDeleteMessageEveryone = async (messageId: string) => {
+    // Optimistic Update
+    setThreads((current) =>
+      current.map((t) => {
+        if (t.threadId === activeThreadId) {
+          return {
+            ...t,
+            messages: t.messages.filter((m) => m.id !== messageId),
+          };
+        }
+        return t;
+      })
+    );
+
+    try {
+      const { error } = await supabase
+        .from("support_messages")
+        .delete()
+        .eq("id", messageId);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Error deleting message for everyone:", err);
+    }
+  };
+
+  /* Delete Message for Me Only */
+  const handleDeleteMessageMe = async (messageId: string) => {
+    // Optimistic Update
+    setThreads((current) =>
+      current.map((t) => {
+        if (t.threadId === activeThreadId) {
+          return {
+            ...t,
+            messages: t.messages.filter((m) => m.id !== messageId),
+          };
+        }
+        return t;
+      })
+    );
+
+    try {
+      const { error } = await supabase
+        .from("support_messages")
+        .update({ deleted_for_admin: true })
+        .eq("id", messageId);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Error deleting message for me:", err);
     }
   };
 
@@ -706,7 +829,7 @@ function LiveChatSupportPageContent() {
                       <div
                         key={msg.id}
                         className={cn(
-                          "flex items-end gap-2.5 max-w-[80%]",
+                          "flex items-end gap-2.5 max-w-[80%] group",
                           isAdmin ? "ml-auto flex-row-reverse" : "mr-auto"
                         )}
                       >
@@ -720,17 +843,59 @@ function LiveChatSupportPageContent() {
                         )}
 
                         {/* Bubble */}
-                        <div className="space-y-1">
+                        <div className="space-y-1 max-w-[70%]">
                           <div
                             className={cn(
-                              "p-3 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm",
+                              "p-3 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm relative",
                               isAdmin
                                 ? "text-white rounded-br-none"
                                 : "bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200"
                             )}
                             style={isAdmin ? { background: BRAND_GRADIENT } : {}}
                           >
-                            {msg.text}
+                            {editingMessageId === msg.id ? (
+                              <div className="flex flex-col gap-2 min-w-[180px]">
+                                <input
+                                  type="text"
+                                  value={editingText}
+                                  onChange={(e) => setEditingText(e.target.value)}
+                                  className="w-full p-2 text-xs text-gray-800 rounded border border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    onClick={() => {
+                                      setEditingMessageId(null);
+                                      setEditingText("");
+                                    }}
+                                    className="px-2 py-1 text-[10px] bg-emerald-800 hover:bg-emerald-950 text-white rounded font-bold transition-all"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={async () => {
+                                      if (editingText.trim()) {
+                                        await handleEditMessage(msg.id, editingText.trim());
+                                        setEditingMessageId(null);
+                                        setEditingText("");
+                                      }
+                                    }}
+                                    className="px-2 py-1 text-[10px] bg-white text-emerald-800 hover:bg-gray-100 rounded font-bold transition-all"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div>{msg.text}</div>
+                                {msg.is_edited && (
+                                  <span className={cn(
+                                    "text-[9px] block mt-1 font-normal italic",
+                                    isAdmin ? "text-emerald-100/70" : "text-gray-400"
+                                  )}>Edited</span>
+                                )}
+                              </>
+                            )}
                           </div>
                           <div className={cn(
                             "text-[8px] text-gray-600 font-bold font-mono flex items-center gap-1.5 mt-0.5",
@@ -747,6 +912,38 @@ function LiveChatSupportPageContent() {
                             )}
                           </div>
                         </div>
+
+                        {/* Action buttons on Hover */}
+                        {editingMessageId !== msg.id && (
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1 self-center bg-white border border-gray-200 p-1.5 rounded-xl shadow-md">
+                            {isAdmin && (
+                              <button
+                                onClick={() => {
+                                  setEditingMessageId(msg.id);
+                                  setEditingText(msg.text);
+                                }}
+                                className="p-1 rounded text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                                title="Edit Message"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteMessageEveryone(msg.id)}
+                              className="p-1 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                              title="Delete for Everyone"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteMessageMe(msg.id)}
+                              className="p-1 rounded text-gray-500 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                              title="Delete for Me Only"
+                            >
+                              <User className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
