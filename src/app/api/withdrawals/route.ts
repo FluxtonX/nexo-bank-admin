@@ -4,11 +4,20 @@ import { checkAdminPermission } from "@/lib/checkAdminPermission";
 import { fetchLiveCADRates } from "@/lib/utils";
 
 // Helper function to send email via Brevo
-async function sendBrevoEmail(email: string, subject: string, htmlContent: string) {
+type EmailDeliveryResult =
+  | { status: "sent" }
+  | { status: "skipped"; reason: "missing_brevo_key" }
+  | { status: "failed"; reason: string };
+
+async function sendBrevoEmail(
+  email: string,
+  subject: string,
+  htmlContent: string
+): Promise<EmailDeliveryResult> {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
   if (!BREVO_API_KEY) {
-    console.log(`[LOCAL DEV] Would send email to ${email}: ${subject}`);
-    return;
+    console.error(`[sendBrevoEmail] BREVO_API_KEY is missing; email was not sent to ${email}: ${subject}`);
+    return { status: "skipped", reason: "missing_brevo_key" };
   }
 
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -28,7 +37,10 @@ async function sendBrevoEmail(email: string, subject: string, htmlContent: strin
   if (!response.ok) {
     const responseBody = await response.text();
     console.error("[sendBrevoEmail] Brevo API Error:", responseBody);
+    return { status: "failed", reason: `Brevo returned HTTP ${response.status}` };
   }
+
+  return { status: "sent" };
 }
 
 export const dynamic = "force-dynamic";
@@ -314,6 +326,11 @@ export async function PATCH(request: Request) {
       is_read: false
     });
 
+    let emailDelivery: EmailDeliveryResult | { status: "skipped"; reason: "missing_user_email" } = {
+      status: "skipped",
+      reason: "missing_user_email",
+    };
+
     if (userEmail) {
       const emailDate = new Date().toLocaleString();
       const emailHtml = isApproved
@@ -340,15 +357,22 @@ export async function PATCH(request: Request) {
              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
            </div>`;
 
-      // Do not await to avoid blocking the response
-      sendBrevoEmail(
-        userEmail,
-        isApproved ? "Withdrawal Approved - Nexo" : "Withdrawal Rejected - Nexo",
-        emailHtml
-      ).catch(e => console.error("Failed to send withdrawal email:", e));
+      // Await the provider call so serverless runtimes do not stop it after this route responds.
+      try {
+        emailDelivery = await sendBrevoEmail(
+          userEmail,
+          isApproved ? "Withdrawal Approved - Nexo" : "Withdrawal Rejected - Nexo",
+          emailHtml
+        );
+      } catch (emailError) {
+        console.error("Failed to send withdrawal email:", emailError);
+        emailDelivery = { status: "failed", reason: "Brevo request failed" };
+      }
     }
 
-    return NextResponse.json({ success: true });
+    // The withdrawal has already been safely processed; email delivery must not trigger a retry
+    // that could repeat wallet or ledger updates.
+    return NextResponse.json({ success: true, emailDelivery });
   } catch (error: any) {
     console.error("PATCH Withdrawal Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

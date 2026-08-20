@@ -1118,51 +1118,6 @@ function LiveChatSupportPageContent() {
             </motion.div>
           </div>
         )}
-      <AnimatePresence>
-        {deleteModalMsg && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: "spring", duration: 0.25 }}
-              className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-gray-100 space-y-4"
-            >
-              <h3 className="font-extrabold text-gray-900 text-sm">Delete message?</h3>
-              <p className="text-xs text-gray-600 font-medium">Are you sure you want to delete this message?</p>
-              <div className="flex flex-col gap-2 pt-2">
-                {deleteModalMsg.isAdmin && (
-                  <button
-                    onClick={async () => {
-                      const msgId = deleteModalMsg.id;
-                      setDeleteModalMsg(null);
-                      await handleDeleteMessageEveryone(msgId);
-                    }}
-                    className="w-full py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
-                  >
-                    Delete for everyone
-                  </button>
-                )}
-                <button
-                  onClick={async () => {
-                    const msgId = deleteModalMsg.id;
-                    setDeleteModalMsg(null);
-                    await handleDeleteMessageMe(msgId);
-                  }}
-                  className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all"
-                >
-                  Delete for me
-                </button>
-                <button
-                  onClick={() => setDeleteModalMsg(null)}
-                  className="w-full py-2.5 px-4 border border-gray-200 text-gray-600 hover:text-gray-800 text-xs font-bold rounded-xl transition-all"
-                >
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
       </AnimatePresence>
 
       {/* Delete Thread Confirmation Modal */}
