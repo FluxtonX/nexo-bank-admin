@@ -659,7 +659,7 @@ function LiveChatSupportPageContent() {
           id: userId, name: userName, email: userEmail, phone: "N/A",
           kyc: "Not Started", account: "Active", balance: 0, joinedDate: "",
           risk: "Low Risk", dateOfBirth: "", street: "", city: "", postalCode: "",
-          country: "", lastLogin: "",
+          country: "", lastLogin: "", twoFactor: false, lastIp: "",
         },
         status: "Active",
         unreadCount: 0,
