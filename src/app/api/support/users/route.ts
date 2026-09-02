@@ -39,6 +39,41 @@ export async function GET(request: Request) {
     const profiles = profilesResult.data || [];
     const kycData = kycResult.data || [];
 
+    // For any userIds requested that aren't in profiles, or have no full_name/email, fetch from auth.admin
+    const missingUserIds = userIds.filter(id => !profiles.some(p => p.id === id && (p.full_name || p.email)));
+    const authFallbacks: Record<string, { email: string; full_name: string }> = {};
+
+    if (missingUserIds.length > 0) {
+      await Promise.all(
+        missingUserIds.map(async (uid) => {
+          try {
+            const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(uid);
+            if (authUser?.user) {
+              const u = authUser.user;
+              const name = (u.user_metadata?.full_name as string) || (u.user_metadata?.name as string) || u.email?.split("@")[0] || "User";
+              authFallbacks[uid] = {
+                email: u.email || "",
+                full_name: name,
+              };
+
+              // Self-heal profiles table
+              await supabaseAdmin.from("profiles").upsert(
+                {
+                  id: uid,
+                  email: u.email,
+                  full_name: name,
+                  updated_at: new Date().toISOString(),
+                },
+                { onConflict: "id" }
+              );
+            }
+          } catch (e) {
+            console.error(`Error fetching auth user ${uid}:`, e);
+          }
+        })
+      );
+    }
+
     // Generate signed URLs for KYC selfies *only* for the fetched users
     const kycDataWithSignedUrls = await Promise.all(
       kycData.map(async (kyc) => {
@@ -66,15 +101,22 @@ export async function GET(request: Request) {
       })
     );
 
-    const mapped = profiles.map((p) => {
-      const kyc = kycDataWithSignedUrls.find((k) => k.user_id === p.id);
-      
+    // Build the mapped result including any authFallbacks
+    const allUserIds = userIds.length > 0 ? userIds : profiles.map(p => p.id);
+    const mapped = allUserIds.map((uid) => {
+      const p = profiles.find((prof) => prof.id === uid);
+      const kyc = kycDataWithSignedUrls.find((k) => k.user_id === uid);
+      const fallback = authFallbacks[uid];
+
+      const email = p?.email || fallback?.email || "";
+      const fullName = kyc?.full_name || p?.full_name || fallback?.full_name || (email ? email.split("@")[0] : "User");
+
       return {
-        id: p.id,
-        email: p.email || "",
-        full_name: kyc?.full_name || p.full_name || p.email || "Unknown User",
+        id: uid,
+        email,
+        full_name: fullName,
         kyc_selfie_url: kyc?.status === "approved" ? kyc.signed_selfie_url : null,
-        google_avatar_url: null, // Resolved from client or fallbacks
+        google_avatar_url: null,
       };
     });
 

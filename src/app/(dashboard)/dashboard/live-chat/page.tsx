@@ -406,17 +406,13 @@ function LiveChatSupportPageContent() {
             return;
           }
 
-          // For INSERT or UPDATE: preserve existing user name from current thread state
-          // to avoid reverting to "User" when no kyc lookup is done in the subscription.
           setThreads((current) => {
             const index = current.findIndex((t) => t.threadId === updatedRow.id);
             const existingThread = index !== -1 ? current[index] : null;
 
-            // Re-use the user object from the existing thread if available,
-            // so the resolved name (kyc/profile) is never lost on update.
             const preservedUser: AdminUser = existingThread?.user ?? {
               id: updatedRow.user_id,
-              name: "Unknown User",
+              name: "User",
               email: "N/A",
               phone: "N/A",
               kyc: "Not Started",
@@ -455,6 +451,34 @@ function LiveChatSupportPageContent() {
               new Date(b.lastMessageAtISO).getTime() - new Date(a.lastMessageAtISO).getTime()
             );
           });
+
+          // If this user was not already loaded with a full name, fetch via API
+          try {
+            const res = await fetch(`/api/support/users?ids=${updatedRow.user_id}`);
+            if (res.ok) {
+              const userData = await res.json();
+              if (userData && userData.length > 0) {
+                const u = userData[0];
+                setThreads((curr) =>
+                  curr.map((t) =>
+                    t.threadId === updatedRow.id
+                      ? {
+                          ...t,
+                          user: {
+                            ...t.user,
+                            name: u.full_name || t.user.name,
+                            email: u.email || t.user.email,
+                            kyc_selfie_url: u.kyc_selfie_url,
+                          },
+                        }
+                      : t
+                  )
+                );
+              }
+            }
+          } catch (e) {
+            console.error("Error resolving user for thread update:", e);
+          }
         }
       )
       .subscribe();
@@ -817,15 +841,20 @@ function LiveChatSupportPageContent() {
                         <p className="text-[11px] text-gray-600 font-medium truncate pr-1">
                           {lastMsg ? lastMsg.text : "No messages yet"}
                         </p>
-                        <div className="flex items-center gap-1.5 pt-1">
+                        <div className="flex items-center gap-1.5 pt-1 flex-wrap">
                           <span className="text-[9px] text-gray-600 font-mono uppercase tracking-tight">{thread.user.id.substring(0, 8)}</span>
-                          {thread.is_ticket && (
-                            <span className="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tight">
-                              Ticket: {thread.category || "Other"}
+                          {thread.ticket_id && (
+                            <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[9px] font-bold font-mono tracking-tight">
+                              {thread.ticket_id}
+                            </span>
+                          )}
+                          {thread.category && (
+                            <span className="bg-blue-50 text-blue-700 border border-blue-100 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-tight">
+                              {thread.category}
                             </span>
                           )}
                           {thread.status === "Waiting" && (
-                            <span className="text-[8px] bg-amber-50 text-amber-700 font-bold uppercase px-1 rounded">waiting</span>
+                            <span className="text-[8px] bg-amber-50 text-amber-700 font-bold uppercase px-1 rounded border border-amber-200">waiting</span>
                           )}
                         </div>
                       </div>
@@ -875,12 +904,22 @@ function LiveChatSupportPageContent() {
                     </button>
                     <UserAvatar user={activeThread.user} size="md" />
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <h4 className="font-bold text-gray-900 text-sm leading-none">{activeThread.user.name}</h4>
                         <span className="flex items-center gap-1 bg-gray-100 text-gray-600 font-bold uppercase px-2 py-0.5 rounded-full text-[9px] tracking-wide border border-gray-150 font-mono">
                           <StatusIndicator status={activeThread.status} />
                           {activeThread.status}
                         </span>
+                        {activeThread.ticket_id && (
+                          <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono">
+                            {activeThread.ticket_id}
+                          </span>
+                        )}
+                        {activeThread.category && (
+                          <span className="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase">
+                            {activeThread.category}
+                          </span>
+                        )}
                       </div>
                       <span className="text-[10px] text-gray-600 font-mono mt-1 block">{activeThread.user.id.substring(0, 8)} • {activeThread.user.email}</span>
                     </div>
@@ -890,18 +929,27 @@ function LiveChatSupportPageContent() {
                   <div className="flex items-center gap-1.5 border border-gray-200 bg-gray-50 p-1 rounded-xl">
                     {(["Active", "Waiting", "Resolved", "Closed"] as ChatStatus[]).map((st) => {
                       const active = activeThread.status === st;
+                      const activeColors =
+                        st === "Resolved"
+                          ? "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
+                          : st === "Active"
+                          ? "bg-blue-600 text-white shadow-sm hover:bg-blue-700"
+                          : st === "Waiting"
+                          ? "bg-amber-500 text-white shadow-sm hover:bg-amber-600"
+                          : "bg-slate-700 text-white shadow-sm hover:bg-slate-800";
+
                       return (
                         <button
                           key={st}
                           onClick={() => handleSetStatus(st)}
                           className={cn(
-                            "px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer",
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer",
                             active
-                              ? "bg-white text-gray-800 shadow-sm"
-                              : "text-gray-600 hover:text-gray-700"
+                              ? activeColors
+                              : "text-gray-600 hover:text-gray-900 hover:bg-white/60"
                           )}
                         >
-                          {st}
+                          {st === "Resolved" ? "✓ Resolved" : st}
                         </button>
                       );
                     })}
