@@ -41,8 +41,10 @@ export function formatCurrency(
   }).format(value);
 }
 
+export const TORONTO_TIMEZONE = "America/Toronto";
+
 /**
- * Formats a Date object or ISO string to a readable date/time string.
+ * Formats a Date object or ISO string to a readable date string in Ontario/Toronto timezone.
  */
 export function formatDate(
   date: Date | string,
@@ -53,16 +55,42 @@ export function formatDate(
   }
 ): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("en-US", options).format(d);
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: TORONTO_TIMEZONE,
+    ...options,
+  }).format(d);
 }
 
 /**
- * Returns relative time string (e.g. "2 hours ago").
+ * Formats a Date object or ISO string to a readable date & time string in Ontario/Toronto timezone.
+ */
+export function formatDateTime(
+  date: Date | string,
+  options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }
+): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: TORONTO_TIMEZONE,
+    ...options,
+  }).format(d);
+}
+
+/**
+ * Returns relative time string (e.g. "2h ago", "just now") in Ontario/Toronto timezone context.
  */
 export function timeAgo(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
   const diff = now.getTime() - d.getTime();
+  if (diff < 60000) return "just now";
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);

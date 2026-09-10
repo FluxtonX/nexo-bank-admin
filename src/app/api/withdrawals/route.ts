@@ -206,11 +206,13 @@ export async function PATCH(request: Request) {
         // 2. Fetch live CAD rates
         const rates = await fetchLiveCADRates();
 
-        // 3. Convert CAD withdrawal amount to that crypto using live rate
-        // fetchLiveCADRates returns keys as uppercase coin symbols: BTC, ETH, USDT, etc.
+        // 3. Determine amount to deduct:
+        // If wdr.method === "crypto", wdr.amount is already denominated in the cryptocurrency.
+        // Otherwise (legacy), convert CAD withdrawal amount to that crypto using live rate.
+        const isCryptoMethod = wdr.method === "crypto";
         const cadRate = Number(rates[cryptoCurrency]) || Number(rates["USDT"]) || 1.36;
 
-        let amountToDeduct = wdr.amount / cadRate;
+        let amountToDeduct = isCryptoMethod ? Number(wdr.amount) : wdr.amount / cadRate;
         cryptoAmountToDeduct = amountToDeduct;
 
         // 4. Fetch user balance for that specific currency from user_wallets
@@ -238,7 +240,7 @@ export async function PATCH(request: Request) {
             cryptoAmountToDeduct = currentBalance;
           } else {
             return NextResponse.json({
-              error: `Insufficient balance due to price change: User has ${currentBalance.toFixed(6)} ${cryptoCurrency}, but this withdrawal now requires ${amountToDeduct.toFixed(6)} ${cryptoCurrency}. Please reject and ask user to re-request.`
+              error: `Insufficient balance: User has ${currentBalance.toFixed(6)} ${cryptoCurrency}, but this withdrawal requires ${amountToDeduct.toFixed(6)} ${cryptoCurrency}. Please reject and ask user to re-request.`
             }, { status: 400 });
           }
         }
@@ -251,13 +253,13 @@ export async function PATCH(request: Request) {
           .eq("currency", cryptoCurrency);
         if (walletErr) throw walletErr;
 
-        // 6. wallet_ledger entry should also use the correct currency
+        // 6. wallet_ledger entry should also use the correct currency and provider
         const { error: ledgerErr } = await supabaseAdmin
           .from("wallet_ledger")
           .insert({
             user_id: wdr.user_id,
             type: "WITHDRAWAL",
-            provider: "INTERAC",
+            provider: isCryptoMethod ? "CRYPTO" : "INTERAC",
             currency: cryptoCurrency,
             amount: amountToDeduct,
             status: "COMPLETED",

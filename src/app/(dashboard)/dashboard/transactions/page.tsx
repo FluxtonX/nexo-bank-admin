@@ -30,7 +30,7 @@ import {
   ThumbsDown,
   ThumbsUp,
 } from "lucide-react";
-import { cn, fetchLiveCADRates } from "@/lib/utils";
+import { cn, fetchLiveCADRates, formatDateTime } from "@/lib/utils";
 import { USERS_DATA, type AdminUser } from "@/lib/data/users";
 
 type TransactionType = "Deposit" | "Withdrawal";
@@ -292,7 +292,8 @@ function TransactionsDashboardContent() {
         cryptoCurrency: d.asset,
         status: (d.status === "approved" || d.status === "completed") ? "Completed" : d.status === "rejected" ? "Failed" : "Pending",
         riskScore: "Low Risk",
-        timestamp: new Date(d.created_at).toISOString().replace("T", " ").slice(0, 19),
+        timestamp: formatDateTime(d.created_at),
+        rawDate: new Date(d.created_at).getTime(),
         toAddress: d.company_address,
         txHash: d.tx_hash,
         network: d.network,
@@ -320,7 +321,8 @@ function TransactionsDashboardContent() {
         cryptoCurrency: w.asset || "CAD",
         status: w.status === "completed" ? "Completed" : w.status === "rejected" ? "Failed" : "Pending",
         riskScore: "Medium Risk",
-        timestamp: new Date(w.created_at).toISOString().replace("T", " ").slice(0, 19),
+        timestamp: formatDateTime(w.created_at),
+        rawDate: new Date(w.created_at).getTime(),
         fromAddress: w.interac_email,
         txHash: w.security_question || "N/A",
         network: "Interac e-Transfer",
@@ -328,7 +330,7 @@ function TransactionsDashboardContent() {
       } as any);
     });
 
-    list.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    list.sort((a: any, b: any) => b.rawDate - a.rawDate);
     return list;
   }, [depositsData, withdrawalsData, liveRates]);
 
