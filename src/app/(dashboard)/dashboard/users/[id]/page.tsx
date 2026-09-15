@@ -214,7 +214,36 @@ function NoteModal({ onConfirm, onClose }: { onConfirm: (n: string) => void; onC
   );
 }
 
-const COIN_OPTIONS = ["BTC", "ETH", "USDT", "CAD"] as const;
+const COIN_OPTIONS = ["BTC", "ETH", "USDT", "USDC", "CAD"] as const;
+
+function getNowTorontoDateTimeLocal(): string {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(now);
+  const m: Record<string, string> = {};
+  parts.forEach((p) => { m[p.type] = p.value; });
+  return `${m.year}-${m.month}-${m.day}T${m.hour}:${m.minute}`;
+}
+
+function parseToTorontoIso(dateStr: string): string {
+  if (!dateStr) return new Date().toISOString();
+  const parsed = new Date(dateStr);
+  if (isNaN(parsed.getTime())) return new Date().toISOString();
+
+  if (!dateStr.includes("T") && !dateStr.includes(" ")) {
+    const now = new Date();
+    parsed.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+  }
+  return parsed.toISOString();
+}
 
 async function applyWalletDelta(userId: string, currency: string, delta: number) {
   const res = await fetch("/api/users", {
@@ -242,7 +271,7 @@ function AddTransactionModal({
 }) {
   const [coin, setCoin] = useState<string>("BTC");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(() => getNowTorontoDateTimeLocal());
   const [txType, setTxType] = useState<"Deposit" | "Withdrawal">("Deposit");
   const [loading, setLoading] = useState(false);
 
@@ -255,7 +284,7 @@ function AddTransactionModal({
 
     setLoading(true);
     try {
-      const txDate = new Date(date).toISOString();
+      const txDate = parseToTorontoIso(date);
       const res = await fetch("/api/users/transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -323,8 +352,8 @@ function AddTransactionModal({
               <input type="number" min="0" step="any" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-800" />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-800" />
+              <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Date & Time (Toronto)</label>
+              <input type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-800" />
             </div>
           </div>
           <div className="flex gap-3 pt-2">
@@ -356,7 +385,7 @@ function ManageBalanceModal({
   const [cadAmount, setCadAmount] = useState("");
   const [action, setAction] = useState<"Add" | "Deduct">("Add");
   const [reason, setReason] = useState("");
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(() => getNowTorontoDateTimeLocal());
   const [loading, setLoading] = useState(false);
   const [rateLoading, setRateLoading] = useState(true);
   const [currentBalance, setCurrentBalance] = useState<number>(0);
@@ -480,7 +509,7 @@ function ManageBalanceModal({
 
     setLoading(true);
     try {
-      const txDate = new Date(date).toISOString();
+      const txDate = parseToTorontoIso(date);
 
       if (activeTab === "adjust") {
         const delta = action === "Add" ? numericAmount : -numericAmount;
@@ -637,8 +666,8 @@ function ManageBalanceModal({
 
             {(activeTab === "deposit" || activeTab === "withdrawal") && (
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">Date</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-800" />
+                <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">Date & Time (Toronto)</label>
+                <input type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-800" />
               </div>
             )}
           </div>

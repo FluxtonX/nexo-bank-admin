@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { useWithdrawals, useUpdateWithdrawal } from "@/hooks/useAdminQueries";
-import { fetchLiveCADRates } from "@/lib/utils";
+import { fetchLiveCADRates, formatDateTime } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { RequirePermission } from "@/components/layout/RequirePermission";
 import { AnimatePresence, motion } from "framer-motion";
@@ -47,6 +47,13 @@ type WithdrawalRequest = {
   interacRecipient: string;
   previousWithdrawals: number;
   currentBalance: number;
+  method?: "interac" | "sepa" | "crypto";
+  walletAddress?: string;
+  network?: string;
+  iban?: string;
+  bicSwift?: string;
+  recipientName?: string;
+  bankName?: string;
 };
 
 const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
@@ -148,8 +155,14 @@ function WithdrawalRequestsPageContent() {
     };
 
     const list: WithdrawalRequest[] = (withdrawalsData || []).map((w: any) => {
-      const asset = w.asset || (w.method === "interac" ? "CAD" : "USD");
+      const isSepaMethod = w.method === "sepa" || Boolean(w.iban) || (w.asset && ["EUR", "GBP"].includes(String(w.asset).toUpperCase()));
+      const asset = w.asset || (isSepaMethod ? "EUR" : w.method === "interac" ? "CAD" : "USD");
       const rate = cadRateForAsset(asset);
+      const method: "interac" | "sepa" | "crypto" = isSepaMethod
+        ? "sepa"
+        : w.method === "crypto" || (!w.interac_email && w.wallet_address)
+        ? "crypto"
+        : "interac";
 
       return {
         requestId: `WD-${w.id.slice(0, 8).toUpperCase()}`,
@@ -170,15 +183,23 @@ function WithdrawalRequestsPageContent() {
         cryptoCurrency: asset,
         riskScore: "medium risk" as const,
         kycStatus: w.kycStatus || "not started",
-        requestDate: new Date(w.created_at).toISOString().replace("T", " ").slice(0, 19),
+        requestDate: formatDateTime(w.created_at),
+        rawDate: new Date(w.created_at).getTime(),
         status: w.status === "completed" ? "Completed" : w.status === "approved" ? "Approved" : w.status === "rejected" ? "Rejected" : w.status === "failed" ? "Failed" : "Pending",
-        interacRecipient: w.interac_email,
+        interacRecipient: w.interac_email || "",
         previousWithdrawals: 0,
         currentBalance: Number(w.amount),
+        method,
+        walletAddress: w.wallet_address,
+        network: w.network,
+        iban: w.iban || (method === "sepa" ? w.wallet_address : undefined),
+        bicSwift: w.bic_swift || (method === "sepa" ? w.network : undefined),
+        recipientName: w.recipient_name || (method === "sepa" ? (w.interac_email || w.user?.name) : undefined),
+        bankName: w.bank_name,
       };
     });
 
-    list.sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
+    list.sort((a: any, b: any) => b.rawDate - a.rawDate);
     return list;
   }, [withdrawalsData, liveRates]);
 
@@ -592,10 +613,46 @@ function WithdrawalRequestsPageContent() {
                           <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Cryptocurrency</span>
                           <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.cryptoAmount}</p>
                         </div>
-                        <div>
-                          <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Interac Recipient</span>
-                          <p className="text-sm font-bold text-gray-900 truncate mt-0.5">{selectedRequest.interacRecipient}</p>
-                        </div>
+                        {selectedRequest.method === "sepa" ? (
+                          <>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Recipient Name</span>
+                              <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.recipientName || selectedRequest.user.name}</p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">IBAN</span>
+                              <p className="text-xs font-mono font-bold text-gray-900 break-all mt-1 bg-gray-50 p-2 rounded-lg border border-gray-100 select-all">{selectedRequest.iban || "N/A"}</p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">BIC / SWIFT</span>
+                              <p className="text-sm font-mono font-bold text-gray-900 mt-0.5">{selectedRequest.bicSwift || "N/A"}</p>
+                            </div>
+                            {selectedRequest.bankName && (
+                              <div>
+                                <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Bank Name</span>
+                                <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.bankName}</p>
+                              </div>
+                            )}
+                          </>
+                        ) : selectedRequest.method === "crypto" || selectedRequest.walletAddress ? (
+                          <>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Destination Wallet Address</span>
+                              <p className="text-xs font-mono font-bold text-gray-900 break-all mt-1 bg-gray-50 p-2 rounded-lg border border-gray-100 select-all">{selectedRequest.walletAddress || "N/A"}</p>
+                            </div>
+                            {selectedRequest.network && (
+                              <div>
+                                <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Network</span>
+                                <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.network}</p>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div>
+                            <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Interac Recipient</span>
+                            <p className="text-sm font-bold text-gray-900 truncate mt-0.5">{selectedRequest.interacRecipient || "N/A"}</p>
+                          </div>
+                        )}
                         <div>
                           <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Request Date</span>
                           <p className="text-xs font-bold text-gray-800 mt-0.5 font-mono">{selectedRequest.requestDate}</p>
