@@ -32,7 +32,7 @@ export function LandingPanel() {
   const [featSub, setFeatSub] = useState("We've rebuilt banking from the ground up to support both your traditional financial needs and your digital asset investments.");
   const [featBtn, setFeatBtn] = useState("Explore all features");
   const [feat8Title, setFeat8Title] = useState("And much more");
-  const [feat8Desc, setFeat8Desc] = useState("Discover the full power of CDNT.");
+  const [feat8Desc, setFeat8Desc] = useState("Discover the full power of NDNT.");
   const [feat8Btn, setFeat8Btn] = useState("Get Started");
   const [featList, setFeatList] = useState<ComplexListItem[]>([]);
 

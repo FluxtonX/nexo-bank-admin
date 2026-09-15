@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, Shield, AlertCircle, Loader2, UserPlus } from "lucide-react";
-import { CdntLogo } from "@/components/ui/CdntLogo";
+import { NdntLogo } from "@/components/ui/NdntLogo";
 import { supabase } from "@/lib/supabase";
 
 /* ─── Types ─────────────────────────────────────────────────────── */
@@ -171,7 +171,7 @@ export default function LoginPage() {
     >
       {/* Logo + Title */}
       <div className="flex flex-col items-center gap-4 text-center">
-        <CdntLogo />
+        <NdntLogo />
         <div>
           <h1 className="text-[28px] font-bold text-white tracking-tight leading-tight">
             Nexo Bank

@@ -80,7 +80,7 @@ export async function POST(request: Request) {
               <p style="color: #475569; font-size: 14px;">If the button above does not work, copy and paste this URL into your browser:</p>
               <p style="color: #064e3b; font-size: 13px; word-break: break-all;">${inviteLink}</p>
               <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Canadian National Trust Bank</p>
+              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; NDNT Bank</p>
             </div>
           `,
         }),

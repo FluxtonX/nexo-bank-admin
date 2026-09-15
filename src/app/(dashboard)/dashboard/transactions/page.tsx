@@ -755,7 +755,7 @@ function TransactionsDashboardContent() {
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
               <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
-              CDNT secure real-time transaction queue
+              NDNT secure real-time transaction queue
             </div>
           </div>
         </section>
@@ -938,7 +938,7 @@ function TransactionsDashboardContent() {
                 {/* Footer */}
                 <div className="px-8 py-5 border-t border-gray-100 flex justify-between items-center gap-3">
                   <div className="text-xs text-gray-600 font-semibold">
-                    CDNT Admin Signature Authority Required
+                    NDNT Admin Signature Authority Required
                   </div>
 
                   <div className="flex gap-2.5">

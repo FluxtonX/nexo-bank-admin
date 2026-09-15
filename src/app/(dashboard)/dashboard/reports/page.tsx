@@ -195,14 +195,14 @@ function ReportsAnalyticsPageContent() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "CDNT-analytics-report.csv");
+    link.setAttribute("download", "NDNT-analytics-report.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
+    URL.revokeObjectURL(url);
     setExporting(false);
 
-    triggerToast("Report successfully downloaded as CDNT-analytics-report.csv!");
+    triggerToast("Report successfully downloaded as NDNT-analytics-report.csv!");
 
   };
 

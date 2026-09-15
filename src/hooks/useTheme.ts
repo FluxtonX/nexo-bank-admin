@@ -8,7 +8,7 @@ export function useTheme() {
   const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const stored = localStorage.getItem("cdntb-theme") as Theme | null;
+    const stored = (localStorage.getItem("ndntb-theme") || localStorage.getItem("cdntb-theme")) as Theme | null;
     const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
@@ -20,7 +20,7 @@ export function useTheme() {
   const toggle = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
-      localStorage.setItem("cdntb-theme", next);
+      localStorage.setItem("ndntb-theme", next);
       document.documentElement.classList.toggle("dark", next === "dark");
       return next;
     });

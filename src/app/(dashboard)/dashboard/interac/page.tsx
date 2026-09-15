@@ -50,7 +50,7 @@ const INITIAL_PAYOUTS: InteracPayout[] = [
     requestDate: "Jun 2, 10:30 a.m.",
     referenceCode: "WDR-98765",
     securityQuestion: "What platform is this?",
-    securityAnswer: "CDNT",
+    securityAnswer: "NDNT",
   },
   {
     payoutId: "PAY-2024-5677",
@@ -452,7 +452,7 @@ function InteracPayoutsPageContent() {
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
               <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
-              CDNT secure payout authorization queue
+              NDNT secure payout authorization queue
             </div>
           </div>
         </section>
