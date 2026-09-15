@@ -47,9 +47,13 @@ type WithdrawalRequest = {
   interacRecipient: string;
   previousWithdrawals: number;
   currentBalance: number;
-  method?: "interac" | "crypto";
+  method?: "interac" | "sepa" | "crypto";
   walletAddress?: string;
   network?: string;
+  iban?: string;
+  bicSwift?: string;
+  recipientName?: string;
+  bankName?: string;
 };
 
 const BRAND_GRADIENT = "linear-gradient(135deg, #064e3b 0%, #047857 100%)";
@@ -151,8 +155,14 @@ function WithdrawalRequestsPageContent() {
     };
 
     const list: WithdrawalRequest[] = (withdrawalsData || []).map((w: any) => {
-      const asset = w.asset || (w.method === "interac" ? "CAD" : "USD");
+      const isSepaMethod = w.method === "sepa" || Boolean(w.iban) || (w.asset && ["EUR", "GBP"].includes(String(w.asset).toUpperCase()));
+      const asset = w.asset || (isSepaMethod ? "EUR" : w.method === "interac" ? "CAD" : "USD");
       const rate = cadRateForAsset(asset);
+      const method: "interac" | "sepa" | "crypto" = isSepaMethod
+        ? "sepa"
+        : w.method === "crypto" || (!w.interac_email && w.wallet_address)
+        ? "crypto"
+        : "interac";
 
       return {
         requestId: `WD-${w.id.slice(0, 8).toUpperCase()}`,
@@ -179,9 +189,13 @@ function WithdrawalRequestsPageContent() {
         interacRecipient: w.interac_email || "",
         previousWithdrawals: 0,
         currentBalance: Number(w.amount),
-        method: w.method || (w.interac_email ? "interac" : "crypto"),
+        method,
         walletAddress: w.wallet_address,
         network: w.network,
+        iban: w.iban || (method === "sepa" ? w.wallet_address : undefined),
+        bicSwift: w.bic_swift || (method === "sepa" ? w.network : undefined),
+        recipientName: w.recipient_name || (method === "sepa" ? (w.interac_email || w.user?.name) : undefined),
+        bankName: w.bank_name,
       };
     });
 
@@ -599,7 +613,28 @@ function WithdrawalRequestsPageContent() {
                           <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Cryptocurrency</span>
                           <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.cryptoAmount}</p>
                         </div>
-                        {selectedRequest.method === "crypto" || selectedRequest.walletAddress ? (
+                        {selectedRequest.method === "sepa" ? (
+                          <>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Recipient Name</span>
+                              <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.recipientName || selectedRequest.user.name}</p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">IBAN</span>
+                              <p className="text-xs font-mono font-bold text-gray-900 break-all mt-1 bg-gray-50 p-2 rounded-lg border border-gray-100 select-all">{selectedRequest.iban || "N/A"}</p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">BIC / SWIFT</span>
+                              <p className="text-sm font-mono font-bold text-gray-900 mt-0.5">{selectedRequest.bicSwift || "N/A"}</p>
+                            </div>
+                            {selectedRequest.bankName && (
+                              <div>
+                                <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Bank Name</span>
+                                <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedRequest.bankName}</p>
+                              </div>
+                            )}
+                          </>
+                        ) : selectedRequest.method === "crypto" || selectedRequest.walletAddress ? (
                           <>
                             <div>
                               <span className="text-[10px] text-gray-600 font-bold uppercase font-mono leading-none tracking-wider">Destination Wallet Address</span>

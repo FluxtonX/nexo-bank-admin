@@ -152,51 +152,68 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const cryptoCurrency = String((wdr as any).asset || (wdr as any).currency || "USDT").toUpperCase();
+    const assetCurrency = String((wdr as any).asset || (wdr as any).currency || "CAD").toUpperCase();
+    const isCrypto = wdr.method === "crypto";
+    const isSepa = wdr.method === "sepa";
+    const isInterac = wdr.method === "interac" || (!isCrypto && !isSepa && assetCurrency === "CAD");
+    const isFiat = isSepa || isInterac || ["CAD", "EUR", "GBP", "USD", "AUD", "NZD", "CHF", "JPY"].includes(assetCurrency);
     let cryptoAmountToDeduct = 0;
 
     if (status === "approved" || status === "completed") {
-      // Check if withdrawal is in CAD - if so, deduct directly from CAD wallet
-      if (cryptoCurrency === "CAD") {
-        // 2. Fetch user CAD balance from user_wallets
-        const { data: userWallet, error: walletQueryErr } = await supabaseAdmin
+      // Handle fiat withdrawals (CAD, EUR, GBP, etc.)
+      if (isFiat) {
+        // 2. Fetch user wallet balance for that fiat currency (or CAD fallback)
+        let { data: userWallet, error: walletQueryErr } = await supabaseAdmin
           .from("user_wallets")
-          .select("balance")
+          .select("balance, currency")
           .eq("user_id", wdr.user_id)
-          .eq("currency", "CAD")
+          .eq("currency", assetCurrency)
           .maybeSingle();
 
-        if (walletQueryErr) {
-          console.error("Error fetching user CAD wallet:", walletQueryErr);
+        if (!userWallet && assetCurrency !== "CAD") {
+          const cadCheck = await supabaseAdmin
+            .from("user_wallets")
+            .select("balance, currency")
+            .eq("user_id", wdr.user_id)
+            .eq("currency", "CAD")
+            .maybeSingle();
+          if (cadCheck.data) {
+            userWallet = cadCheck.data;
+          }
         }
 
-        const currentBalance = userWallet ? Number(userWallet.balance) : 0;
-        const amountToDeduct = wdr.amount;
+        if (walletQueryErr) {
+          console.error("Error fetching user fiat wallet:", walletQueryErr);
+        }
 
-        // Block if insufficient CAD funds
+        const targetCurrency = userWallet?.currency || assetCurrency;
+        const currentBalance = userWallet ? Number(userWallet.balance) : 0;
+        const amountToDeduct = Number(wdr.amount);
+
+        // Block if insufficient fiat funds
         if (currentBalance < amountToDeduct) {
           return NextResponse.json({
-            error: `Insufficient CAD balance: User has $${currentBalance.toFixed(2)} CAD, but withdrawal request is for $${amountToDeduct.toFixed(2)} CAD.`
+            error: `Insufficient ${targetCurrency} balance: User has ${currentBalance.toFixed(2)} ${targetCurrency}, but withdrawal request is for ${amountToDeduct.toFixed(2)} ${targetCurrency}.`
           }, { status: 400 });
         }
 
-        // 3. Deduct from CAD wallet
+        // 3. Deduct from user fiat wallet
         const newBalance = currentBalance - amountToDeduct;
         const { error: walletErr } = await supabaseAdmin
           .from("user_wallets")
           .update({ balance: newBalance, updated_at: new Date().toISOString() })
           .eq("user_id", wdr.user_id)
-          .eq("currency", "CAD");
+          .eq("currency", targetCurrency);
         if (walletErr) throw walletErr;
 
-        // 4. wallet_ledger entry for CAD withdrawal
+        // 4. wallet_ledger entry for fiat withdrawal
         const { error: ledgerErr } = await supabaseAdmin
           .from("wallet_ledger")
           .insert({
             user_id: wdr.user_id,
             type: "WITHDRAWAL",
-            provider: "INTERAC",
-            currency: "CAD",
+            provider: isSepa ? "SEPA" : "INTERAC",
+            currency: targetCurrency,
             amount: amountToDeduct,
             status: "COMPLETED",
           });
@@ -210,7 +227,7 @@ export async function PATCH(request: Request) {
         // If wdr.method === "crypto", wdr.amount is already denominated in the cryptocurrency.
         // Otherwise (legacy), convert CAD withdrawal amount to that crypto using live rate.
         const isCryptoMethod = wdr.method === "crypto";
-        const cadRate = Number(rates[cryptoCurrency]) || Number(rates["USDT"]) || 1.36;
+        const cadRate = Number(rates[assetCurrency]) || Number(rates["USDT"]) || 1.36;
 
         let amountToDeduct = isCryptoMethod ? Number(wdr.amount) : wdr.amount / cadRate;
         cryptoAmountToDeduct = amountToDeduct;
@@ -220,7 +237,7 @@ export async function PATCH(request: Request) {
           .from("user_wallets")
           .select("balance")
           .eq("user_id", wdr.user_id)
-          .eq("currency", cryptoCurrency)
+          .eq("currency", assetCurrency)
           .maybeSingle();
 
         if (walletQueryErr) {
@@ -240,7 +257,7 @@ export async function PATCH(request: Request) {
             cryptoAmountToDeduct = currentBalance;
           } else {
             return NextResponse.json({
-              error: `Insufficient balance: User has ${currentBalance.toFixed(6)} ${cryptoCurrency}, but this withdrawal requires ${amountToDeduct.toFixed(6)} ${cryptoCurrency}. Please reject and ask user to re-request.`
+              error: `Insufficient balance: User has ${currentBalance.toFixed(6)} ${assetCurrency}, but this withdrawal requires ${amountToDeduct.toFixed(6)} ${assetCurrency}. Please reject and ask user to re-request.`
             }, { status: 400 });
           }
         }
@@ -250,7 +267,7 @@ export async function PATCH(request: Request) {
           .from("user_wallets")
           .update({ balance: newBalance, updated_at: new Date().toISOString() })
           .eq("user_id", wdr.user_id)
-          .eq("currency", cryptoCurrency);
+          .eq("currency", assetCurrency);
         if (walletErr) throw walletErr;
 
         // 6. wallet_ledger entry should also use the correct currency and provider
@@ -260,7 +277,7 @@ export async function PATCH(request: Request) {
             user_id: wdr.user_id,
             type: "WITHDRAWAL",
             provider: isCryptoMethod ? "CRYPTO" : "INTERAC",
-            currency: cryptoCurrency,
+            currency: assetCurrency,
             amount: amountToDeduct,
             status: "COMPLETED",
           });
@@ -307,7 +324,7 @@ export async function PATCH(request: Request) {
       user_name: userName,
       user_id: userId,
       ip_address: request.headers.get("x-forwarded-for") || "127.0.0.1",
-      details: `${action} of $${amount} CAD for user ${userId}. Note: ${adminNote || 'None'}`,
+      details: `${action} of ${amount} ${assetCurrency} for user ${userId}. Note: ${adminNote || 'None'}`,
       user_agent: request.headers.get("user-agent") || "Unknown",
       performed_by_admin: "ADM-001"
     });
@@ -316,8 +333,8 @@ export async function PATCH(request: Request) {
     const notifTitle = isApproved ? "Withdrawal Approved" : "Withdrawal Rejected";
     const notifType = isApproved ? "Success" : "Error";
     const notifMessage = isApproved
-      ? `Your withdrawal request for $${amount.toLocaleString()} CAD has been approved and processed.`
-      : `Your withdrawal request for $${amount.toLocaleString()} CAD was rejected.${rejectionReason || adminNote ? ` Reason: ${rejectionReason || adminNote}` : ''}`;
+      ? `Your withdrawal request for ${amount.toLocaleString()} ${assetCurrency} has been approved and processed.`
+      : `Your withdrawal request for ${amount.toLocaleString()} ${assetCurrency} was rejected.${rejectionReason || adminNote ? ` Reason: ${rejectionReason || adminNote}` : ''}`;
 
     await supabaseAdmin.from("notifications").insert({
       user_id: userId,
@@ -340,8 +357,7 @@ export async function PATCH(request: Request) {
              <h2 style="color: #0F172A;">Withdrawal Approved</h2>
              <p style="color: #475569; font-size: 16px;">Hello ${userName},</p>
              <p style="color: #475569; font-size: 16px;">Your withdrawal request has been approved and processed.</p>
-             <p style="color: #475569; font-size: 14px;"><strong>Withdrawal Amount:</strong> ${cryptoAmountToDeduct.toFixed(6)} ${cryptoCurrency}</p>
-             <p style="color: #475569; font-size: 14px;"><strong>CAD Value:</strong> $${amount.toLocaleString()} CAD</p>
+             <p style="color: #475569; font-size: 14px;"><strong>Withdrawal Amount:</strong> ${amount.toLocaleString()} ${assetCurrency}</p>
              <p style="color: #475569; font-size: 14px;"><strong>Approval Date:</strong> ${emailDate}</p>
              ${adminNote ? `<p style="color: #475569; font-size: 14px;"><strong>Admin Note:</strong> ${adminNote}</p>` : ''}
              <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
@@ -351,15 +367,14 @@ export async function PATCH(request: Request) {
              <h2 style="color: #0F172A;">Withdrawal Rejected</h2>
              <p style="color: #475569; font-size: 16px;">Hello ${userName},</p>
              <p style="color: #475569; font-size: 16px;">Your withdrawal request was rejected.</p>
-             <p style="color: #475569; font-size: 14px;"><strong>Withdrawal Amount:</strong> $${amount.toLocaleString()} CAD</p>
-             <p style="color: #475569; font-size: 14px;"><strong>Currency:</strong> ${cryptoCurrency}</p>
+             <p style="color: #475569; font-size: 14px;"><strong>Withdrawal Amount:</strong> ${amount.toLocaleString()} ${assetCurrency}</p>
+             <p style="color: #475569; font-size: 14px;"><strong>Currency:</strong> ${assetCurrency}</p>
              <p style="color: #475569; font-size: 14px;"><strong>Rejection Date:</strong> ${emailDate}</p>
              <p style="color: #475569; font-size: 14px;"><strong>Reason:</strong> ${rejectionReason || adminNote || 'No specific reason provided.'}</p>
              <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo</p>
            </div>`;
 
-      // Await the provider call so serverless runtimes do not stop it after this route responds.
       try {
         emailDelivery = await sendBrevoEmail(
           userEmail,
