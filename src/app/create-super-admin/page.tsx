@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, User, Shield, ArrowLeft, Loader2, CheckCircle, AlertCircle, UserPlus } from "lucide-react";
-import { CdntLogo } from "@/components/ui/CdntLogo";
+import { NdntLogo } from "@/components/ui/NdntLogo";
 
 interface FormValues {
   email: string;
@@ -122,7 +122,7 @@ export default function CreateSuperAdminPage() {
     >
       {/* Logo + Title */}
       <div className="flex flex-col items-center gap-4 text-center">
-        <CdntLogo />
+        <NdntLogo />
         <div>
           <h1 className="text-[28px] font-bold text-white tracking-tight leading-tight">
             Nexo Bank

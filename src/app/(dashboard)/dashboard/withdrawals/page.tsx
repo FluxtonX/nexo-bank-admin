@@ -526,7 +526,7 @@ function WithdrawalRequestsPageContent() {
             </span>
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
               <ShieldCheck className="h-4 w-4 text-[#064e3b]" />
-              CDNT secure withdrawal ledger
+              NDNT secure withdrawal ledger
             </div>
           </div>
         </section>
