@@ -21,11 +21,18 @@ import {
   Loader2,
   Edit2,
   Trash2,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type AdminUser } from "@/lib/data/users";
 import { supabase } from "@/lib/supabase";
 import { RequirePermission } from "@/components/layout/RequirePermission";
+import {
+  isSameDay,
+  formatChatDayDivider,
+  parseMessageContent,
+  formatMessageContent,
+} from "@/lib/chat-utils";
 
 type ChatStatus = "Active" | "Waiting" | "Resolved" | "Closed";
 
@@ -34,6 +41,7 @@ type Message = {
   sender: "Client" | "Admin";
   text: string;
   timestamp: string;
+  createdAt?: string;
   is_edited?: boolean;
   deleted_for_admin?: boolean;
 };
@@ -152,6 +160,39 @@ function LiveChatSupportPageContent() {
   const [deleteThreadId, setDeleteThreadId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+
+  // Attachment & Lightbox state
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [previewModalUrl, setPreviewModalUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file (PNG, JPG, WEBP, GIF).");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    setAttachmentFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setAttachmentPreview(objectUrl);
+  };
+
+  const handleRemoveAttachment = () => {
+    if (attachmentPreview) {
+      URL.revokeObjectURL(attachmentPreview);
+    }
+    setAttachmentFile(null);
+    setAttachmentPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -273,6 +314,7 @@ function LiveChatSupportPageContent() {
               sender: m.sender as "Client" | "Admin",
               text: m.text,
               timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              createdAt: m.created_at,
               is_edited: m.is_edited,
             }));
 
@@ -350,6 +392,7 @@ function LiveChatSupportPageContent() {
             sender: newMsg.sender as "Client" | "Admin",
             text: newMsg.text,
             timestamp: new Date(newMsg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            createdAt: newMsg.created_at,
             is_edited: newMsg.is_edited,
           };
 
@@ -515,18 +558,45 @@ function LiveChatSupportPageContent() {
   /* Send Admin Message */
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim() || !activeThread) return;
+    if ((!inputText.trim() && !attachmentFile) || !activeThread || uploadingAttachment) return;
 
     const messageText = inputText.trim();
+    const currentAttachmentFile = attachmentFile;
+
+    // Reset input fields immediately for responsiveness
     setInputText("");
+    handleRemoveAttachment();
+    setUploadingAttachment(true);
 
     try {
+      let uploadedAttachmentUrl: string | null = null;
+
+      if (currentAttachmentFile) {
+        const formData = new FormData();
+        formData.append("file", currentAttachmentFile);
+
+        const uploadRes = await fetch("/api/support/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json();
+          throw new Error(errData.error || "Failed to upload image attachment");
+        }
+
+        const uploadData = await uploadRes.json();
+        uploadedAttachmentUrl = uploadData.url;
+      }
+
+      const finalPayloadText = formatMessageContent(messageText, uploadedAttachmentUrl);
+
       const { data: newMsg, error } = await supabase
         .from("support_messages")
         .insert({
           thread_id: activeThread.threadId,
           sender: "Admin",
-          text: messageText,
+          text: finalPayloadText,
         })
         .select()
         .single();
@@ -538,6 +608,7 @@ function LiveChatSupportPageContent() {
         sender: "Admin",
         text: newMsg.text,
         timestamp: new Date(newMsg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        createdAt: newMsg.created_at,
       };
 
       setThreads((current) =>
@@ -555,6 +626,8 @@ function LiveChatSupportPageContent() {
       );
     } catch (err) {
       console.error("Error sending support response:", err);
+    } finally {
+      setUploadingAttachment(false);
     }
   };
 
@@ -963,120 +1036,152 @@ function LiveChatSupportPageContent() {
                       No message history in this thread.
                     </div>
                   )}
-                  {activeThread.messages.map((msg) => {
+                  {activeThread.messages.map((msg, index) => {
                     const isAdmin = msg.sender === "Admin";
+                    const currentCreatedAt = msg.createdAt || activeThread.lastMessageAtISO || new Date().toISOString();
+                    const prevMsg = index > 0 ? activeThread.messages[index - 1] : null;
+                    const prevCreatedAt = prevMsg ? (prevMsg.createdAt || activeThread.lastMessageAtISO) : null;
+                    const isNewDay = !prevCreatedAt || !isSameDay(currentCreatedAt, prevCreatedAt);
+                    const { text: cleanText, imageUrl } = parseMessageContent(msg.text);
+
                     return (
-                      <div
-                        key={msg.id}
-                        className={cn(
-                          "flex items-end gap-2.5 max-w-[80%] group",
-                          isAdmin ? "ml-auto flex-row-reverse" : "mr-auto"
-                        )}
-                      >
-                        {/* Avatar */}
-                        {isAdmin ? (
-                          <div className="h-7 w-7 rounded-lg bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-600 font-bold font-mono text-xs shrink-0 select-none">
-                            A
+                      <div key={msg.id} className="space-y-4">
+                        {/* Day Divider */}
+                        {isNewDay && (
+                          <div className="flex items-center justify-center my-4 select-none">
+                            <div className="h-[1px] flex-1 bg-gray-200" />
+                            <span className="mx-3 px-3.5 py-1 rounded-full text-[10.5px] font-bold text-gray-500 bg-gray-100 border border-gray-200 shadow-2xs">
+                              {formatChatDayDivider(currentCreatedAt)}
+                            </span>
+                            <div className="h-[1px] flex-1 bg-gray-200" />
                           </div>
-                        ) : (
-                          <UserAvatar user={activeThread.user} size="sm" />
                         )}
 
-                        {/* Bubble */}
-                        <div className="space-y-1 max-w-[70%]">
-                          <div
-                            className={cn(
-                              "p-3 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm relative",
-                              isAdmin
-                                ? "text-white rounded-br-none"
-                                : "bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200"
-                            )}
-                            style={isAdmin ? { background: BRAND_GRADIENT } : {}}
-                          >
-                            {editingMessageId === msg.id ? (
-                              <div className="flex flex-col gap-2 min-w-[180px]">
-                                <input
-                                  type="text"
-                                  value={editingText}
-                                  onChange={(e) => setEditingText(e.target.value)}
-                                  className="w-full p-2 text-xs text-gray-800 rounded border border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
-                                />
-                                <div className="flex gap-2 justify-end">
-                                  <button
-                                    onClick={() => {
-                                      setEditingMessageId(null);
-                                      setEditingText("");
-                                    }}
-                                    className="px-2 py-1 text-[10px] bg-emerald-800 hover:bg-emerald-950 text-white rounded font-bold transition-all"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    onClick={async () => {
-                                      if (editingText.trim()) {
-                                        await handleEditMessage(msg.id, editingText.trim());
+                        <div
+                          className={cn(
+                            "flex items-end gap-2.5 max-w-[80%] group",
+                            isAdmin ? "ml-auto flex-row-reverse" : "mr-auto"
+                          )}
+                        >
+                          {/* Avatar */}
+                          {isAdmin ? (
+                            <div className="h-7 w-7 rounded-lg bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-600 font-bold font-mono text-xs shrink-0 select-none">
+                              A
+                            </div>
+                          ) : (
+                            <UserAvatar user={activeThread.user} size="sm" />
+                          )}
+
+                          {/* Bubble */}
+                          <div className="space-y-1 max-w-[70%]">
+                            <div
+                              className={cn(
+                                "p-3 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm relative",
+                                isAdmin
+                                  ? "text-white rounded-br-none"
+                                  : "bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200"
+                              )}
+                              style={isAdmin ? { background: BRAND_GRADIENT } : {}}
+                            >
+                              {editingMessageId === msg.id ? (
+                                <div className="flex flex-col gap-2 min-w-[180px]">
+                                  <input
+                                    type="text"
+                                    value={editingText}
+                                    onChange={(e) => setEditingText(e.target.value)}
+                                    className="w-full p-2 text-xs text-gray-800 rounded border border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                                  />
+                                  <div className="flex gap-2 justify-end">
+                                    <button
+                                      onClick={() => {
                                         setEditingMessageId(null);
                                         setEditingText("");
-                                      }
-                                    }}
-                                    className="px-2 py-1 text-[10px] bg-white text-emerald-800 hover:bg-gray-100 rounded font-bold transition-all"
-                                  >
-                                    Save
-                                  </button>
+                                      }}
+                                      className="px-2 py-1 text-[10px] bg-emerald-800 hover:bg-emerald-950 text-white rounded font-bold transition-all"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      onClick={async () => {
+                                        if (editingText.trim()) {
+                                          await handleEditMessage(msg.id, editingText.trim());
+                                          setEditingMessageId(null);
+                                          setEditingText("");
+                                        }
+                                      }}
+                                      className="px-2 py-1 text-[10px] bg-white text-emerald-800 hover:bg-gray-100 rounded font-bold transition-all"
+                                    >
+                                      Save
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <>
-                                <div>{msg.text}</div>
-                                {msg.is_edited && (
-                                  <span className={cn(
-                                    "text-[9px] block mt-1 font-normal italic",
-                                    isAdmin ? "text-emerald-100/70" : "text-gray-400"
-                                  )}>Edited</span>
-                                )}
-                              </>
-                            )}
-                          </div>
-                          <div className={cn(
-                            "text-[8px] text-gray-600 font-bold font-mono flex items-center gap-1.5 mt-0.5",
-                            isAdmin ? "justify-end" : "justify-start"
-                          )}>
-                            <span>{msg.timestamp}</span>
-                            {isAdmin && (
-                              <CheckCheck className={cn(
-                                "h-3.5 w-3.5 shrink-0",
-                                activeThread.unreadCountUser === 0
-                                  ? "text-sky-400 font-bold"
-                                  : "text-white/40"
-                              )} />
-                            )}
-                          </div>
-                        </div>
+                              ) : (
+                                <>
+                                  {/* Attached Image Preview in Bubble */}
+                                  {imageUrl && (
+                                    <div className="mb-2 overflow-hidden rounded-xl border border-black/10 bg-black/5 shadow-2xs">
+                                      <img
+                                        src={imageUrl}
+                                        alt="attachment"
+                                        className="max-h-64 max-w-full rounded-xl object-contain cursor-pointer hover:opacity-90 transition-opacity bg-white/40"
+                                        onClick={() => setPreviewModalUrl(imageUrl)}
+                                        loading="lazy"
+                                      />
+                                    </div>
+                                  )}
 
-                        {/* Action buttons on Hover */}
-                        {editingMessageId !== msg.id && (
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1 self-center bg-white border border-gray-200 p-1.5 rounded-xl shadow-md">
-                            {isAdmin && (
-                              <button
-                                onClick={() => {
-                                  setEditingMessageId(msg.id);
-                                  setEditingText(msg.text);
-                                }}
-                                className="p-1 rounded text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-                                title="Edit Message"
-                              >
-                                <Edit2 className="h-3.5 w-3.5" />
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setDeleteModalMsg({ id: msg.id, isAdmin })}
-                              className="p-1 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
-                              title="Delete Message"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                                  {cleanText && <div className="break-words whitespace-pre-wrap">{cleanText}</div>}
+
+                                  {msg.is_edited && (
+                                    <span className={cn(
+                                      "text-[9px] block mt-1 font-normal italic",
+                                      isAdmin ? "text-emerald-100/70" : "text-gray-400"
+                                    )}>Edited</span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                            <div className={cn(
+                              "text-[8px] text-gray-600 font-bold font-mono flex items-center gap-1.5 mt-0.5",
+                              isAdmin ? "justify-end" : "justify-start"
+                            )}>
+                              <span>{msg.timestamp}</span>
+                              {isAdmin && (
+                                <CheckCheck className={cn(
+                                  "h-3.5 w-3.5 shrink-0",
+                                  activeThread.unreadCountUser === 0
+                                    ? "text-sky-400 font-bold"
+                                    : "text-white/40"
+                                )} />
+                              )}
+                            </div>
                           </div>
-                        )}
+
+                          {/* Action buttons on Hover */}
+                          {editingMessageId !== msg.id && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1 self-center bg-white border border-gray-200 p-1.5 rounded-xl shadow-md">
+                              {isAdmin && (
+                                <button
+                                  onClick={() => {
+                                    setEditingMessageId(msg.id);
+                                    setEditingText(msg.text);
+                                  }}
+                                  className="p-1 rounded text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+                                  title="Edit Message"
+                                >
+                                  <Edit2 className="h-3.5 w-3.5" />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => setDeleteModalMsg({ id: msg.id, isAdmin })}
+                                className="p-1 rounded text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                title="Delete Message"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -1085,32 +1190,77 @@ function LiveChatSupportPageContent() {
                 </div>
 
                 {/* Footer Message Compose Area */}
-                <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-gray-200 flex items-center gap-3">
-                  <button
-                    type="button"
-                    className="h-10 w-10 flex items-center justify-center border border-gray-200 rounded-xl text-gray-600 hover:text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
-                    title="Attach Files"
-                  >
-                    <Paperclip className="h-4.5 w-4.5 stroke-[1.8]" />
-                  </button>
+                <div className="bg-white border-t border-gray-200 flex flex-col">
+                  {/* Attachment Preview Banner */}
+                  {attachmentPreview && (
+                    <div className="px-4 pt-3 pb-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between animate-fadeIn">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-white shrink-0 relative">
+                          <img src={attachmentPreview} alt="Preview" className="h-full w-full object-cover" />
+                        </div>
+                        <div className="text-xs">
+                          <p className="font-semibold text-gray-800 truncate max-w-[200px] sm:max-w-[300px]">
+                            {attachmentFile?.name}
+                          </p>
+                          <p className="text-[10px] text-gray-500 font-mono">
+                            {attachmentFile ? `${(attachmentFile.size / 1024).toFixed(1)} KB` : ""} • Image attached
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveAttachment}
+                        className="h-7 w-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 transition-colors cursor-pointer"
+                        title="Remove attachment"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
 
-                  <input
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Type your message..."
-                    className="h-10 flex-1 px-4 border border-gray-200 rounded-xl text-xs font-semibold outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 text-gray-800 placeholder:text-gray-500 bg-gray-50/20"
-                  />
+                  <form onSubmit={handleSendMessage} className="p-4 flex items-center gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                      className="hidden"
+                      onChange={handleFileSelect}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className={cn(
+                        "h-10 w-10 flex items-center justify-center border border-gray-200 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors cursor-pointer shrink-0",
+                        attachmentFile && "border-emerald-500 bg-emerald-50 text-emerald-700"
+                      )}
+                      title="Attach Image"
+                    >
+                      <Paperclip className="h-4.5 w-4.5 stroke-[1.8]" />
+                    </button>
 
-                  <button
-                    type="submit"
-                    disabled={!inputText.trim()}
-                    className="h-10 px-4.5 rounded-xl text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
-                    style={{ background: BRAND_GRADIENT }}
-                  >
-                    <Send className="h-3.5 w-3.5" />
-                    Send
-                  </button>
-                </form>
+                    <input
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder={attachmentFile ? "Add a caption with image (optional)..." : "Type your message..."}
+                      className="h-10 flex-1 px-4 border border-gray-200 rounded-xl text-xs font-semibold outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 text-gray-800 placeholder:text-gray-500 bg-gray-50/20"
+                      disabled={uploadingAttachment}
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={(!inputText.trim() && !attachmentFile) || uploadingAttachment}
+                      className="h-10 px-4.5 rounded-xl text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                      style={{ background: BRAND_GRADIENT }}
+                    >
+                      {uploadingAttachment ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Send className="h-3.5 w-3.5" />
+                      )}
+                      Send
+                    </button>
+                  </form>
+                </div>
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-gray-600 font-semibold text-xs">
@@ -1194,6 +1344,48 @@ function LiveChatSupportPageContent() {
                 >
                   Cancel
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Lightbox Image Preview Modal */}
+      <AnimatePresence>
+        {previewModalUrl && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+            onClick={() => setPreviewModalUrl(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="relative max-w-4xl max-h-[90vh] flex flex-col items-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setPreviewModalUrl(null)}
+                className="absolute -top-10 right-0 text-white hover:text-gray-300 p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
+                title="Close preview"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <img
+                src={previewModalUrl}
+                alt="Enlarged attachment"
+                className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl border border-white/15"
+              />
+              <div className="mt-3.5 flex items-center gap-3">
+                <a
+                  href={previewModalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold backdrop-blur-sm transition-colors flex items-center gap-1.5"
+                >
+                  Open original in new tab ↗
+                </a>
               </div>
             </motion.div>
           </div>
