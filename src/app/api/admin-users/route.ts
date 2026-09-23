@@ -22,7 +22,10 @@ async function sendInviteEmail(email: string, fullName: string, inviteLink: stri
       "api-key": BREVO_API_KEY,
     },
     body: JSON.stringify({
-      sender: { name: "Nexo Bank Security", email: "[EMAIL_ADDRESS]" },
+      sender: { 
+        name: process.env.BREVO_SENDER_NAME || "Nexo Bank Security", 
+        email: process.env.BREVO_SENDER_EMAIL || "noreply@nexofinancial.ca" 
+      },
       to: [{ email }],
       subject: "Set up your Nexo Bank Admin account",
       htmlContent: `
@@ -36,7 +39,7 @@ async function sendInviteEmail(email: string, fullName: string, inviteLink: stri
           <p style="color: #475569; font-size: 14px;">If the button above does not work, copy and paste this URL into your browser:</p>
           <p style="color: #064e3b; font-size: 13px; word-break: break-all;">${inviteLink}</p>
           <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-          <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; NDNT Bank</p>
+          <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo Bank</p>
         </div>
       `,
     }),
