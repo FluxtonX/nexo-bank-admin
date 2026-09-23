@@ -17,8 +17,8 @@ export async function sendBrevoEmail({
   to,
   subject,
   htmlContent,
-  senderName = "Nexo Support",
-  senderEmail = "noreply@ndntbank.com",
+  senderName = process.env.BREVO_SENDER_NAME || "Nexo Support",
+  senderEmail = process.env.BREVO_SENDER_EMAIL || "noreply@nexofinancial.ca",
 }: SendEmailParams): Promise<EmailDeliveryResult> {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
   if (!BREVO_API_KEY) {

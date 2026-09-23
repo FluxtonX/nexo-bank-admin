@@ -66,21 +66,24 @@ export async function POST(request: Request) {
           "api-key": BREVO_API_KEY,
         },
         body: JSON.stringify({
-          sender: { name: "Nexo Bank Security", email: "[EMAIL_ADDRESS]" },
+          sender: { 
+            name: process.env.BREVO_SENDER_NAME || "Nexo Bank Security", 
+            email: process.env.BREVO_SENDER_EMAIL || "noreply@nexofinancial.ca" 
+          },
           to: [{ email }],
-          subject: "Set up your NDNTB Admin account",
+          subject: "Set up your Nexo Bank Admin account",
           htmlContent: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">
               <h2 style="color: #0F172A;">Admin Account Setup</h2>
               <p style="color: #475569; font-size: 16px;">Hello ${admin.full_name || ""},</p>
-              <p style="color: #475569; font-size: 16px;">An administrator account has been created for you on the NDNTB Admin Panel. Please click the button below to set up your password and activate your account:</p>
+              <p style="color: #475569; font-size: 16px;">An administrator account has been created for you on the Nexo Bank Admin Panel. Please click the button below to set up your password and activate your account:</p>
               <div style="text-align: center; margin: 25px 0;">
                 <a href="${inviteLink}" style="background-color: #064e3b; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block;">Set Up Password</a>
               </div>
               <p style="color: #475569; font-size: 14px;">If the button above does not work, copy and paste this URL into your browser:</p>
               <p style="color: #064e3b; font-size: 13px; word-break: break-all;">${inviteLink}</p>
               <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; NDNT Bank</p>
+              <p style="color: #94A3B8; font-size: 12px; text-align: center;">Secure Admin Portal &copy; Nexo Bank</p>
             </div>
           `,
         }),

@@ -39,7 +39,10 @@ async function sendReminderEmail(email: string, name: string, message: string) {
     method: "POST",
     headers: { "Content-Type": "application/json", "api-key": apiKey },
     body: JSON.stringify({
-      sender: { name: "Nexo Support", email: "noreply@ndntbank.com" },
+      sender: { 
+        name: process.env.BREVO_SENDER_NAME || "Nexo Support", 
+        email: process.env.BREVO_SENDER_EMAIL || "noreply@nexofinancial.ca" 
+      },
       to: [{ email, name }],
       subject: "A quick follow-up from Nexo Support",
       textContent: `Hi ${name},\n\nOur support team sent you a message and is ready when you are.\n\n${messagePreview(message)}\n\nReply securely in your Nexo Support inbox: ${supportUrl}`,

@@ -75,6 +75,7 @@ export async function PATCH(request: Request) {
 
     let userEmail = profile?.email || "";
     let userName = profile?.full_name || "Valued Member";
+    const clientBaseUrl = (process.env.CLIENT_APP_URL || "https://www.nexofinancial.ca").replace(/\/$/, "");
 
     // Fallback to Supabase Auth if profile does not have email
     if (!userEmail) {
@@ -143,7 +144,7 @@ export async function PATCH(request: Request) {
               </div>
 
               <div style="text-align: center; margin: 32px 0 16px 0;">
-                <a href="https://ndntbank.com/dashboard" style="display: inline-block; background-color: #047857; color: #FFFFFF; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(4, 120, 87, 0.2);">
+                <a href="${clientBaseUrl}/dashboard" style="display: inline-block; background-color: #047857; color: #FFFFFF; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(4, 120, 87, 0.2);">
                   Go to Nexo Dashboard
                 </a>
               </div>
@@ -207,7 +208,7 @@ export async function PATCH(request: Request) {
               </p>
 
               <div style="text-align: center; margin: 28px 0 16px 0;">
-                <a href="https://ndntbank.com/kyc" style="display: inline-block; background-color: #047857; color: #FFFFFF; text-decoration: none; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 14px;">
+                <a href="${clientBaseUrl}/kyc" style="display: inline-block; background-color: #047857; color: #FFFFFF; text-decoration: none; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 14px;">
                   Resubmit Verification Documents
                 </a>
               </div>

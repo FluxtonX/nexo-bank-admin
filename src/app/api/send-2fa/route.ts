@@ -22,7 +22,10 @@ export async function POST(request: Request) {
         "api-key": BREVO_API_KEY,
       },
       body: JSON.stringify({
-        sender: { name: "Nexo Security", email: "noreply@ndntbank.com" },
+        sender: { 
+          name: process.env.BREVO_SENDER_NAME || "Nexo Security", 
+          email: process.env.BREVO_SENDER_EMAIL || "noreply@nexofinancial.ca" 
+        },
         to: [{ email: email }],
         subject: "Your Admin Verification Code",
         htmlContent: `
